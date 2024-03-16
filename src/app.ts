@@ -4,6 +4,7 @@ import prisma from "../db/db";
 
 import globalErrorHandler from "./controllers/global-error-handler.controller";
 import checkupsRouter from "./routes/checkups.route";
+import dailyDatesRouter from "./routes/daily-dates.route";
 
 const app = express();
 
@@ -11,6 +12,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 app.use("/api/checkups", checkupsRouter);
+app.use("/api/daily-dates", dailyDatesRouter);
 
 app.use(globalErrorHandler);
 

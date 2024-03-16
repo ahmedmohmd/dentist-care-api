@@ -1,6 +1,16 @@
 {
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig to read more about this file */
+    "baseUrl": "./",
+
+    // "paths": {
+    //   // "@src/*": ["./src/*"],
+    //   "@controllers/*": ["src/controllers/*"],
+    //   "@routes/*": ["src/routes/*"],
+    //   "@middleware/*": ["src/middleware/*"],
+    //   "@services/*": ["src/services/*"],
+    //   "@utils/*": ["src/utils/*"]
+    // },
 
     /* Projects */
     // "incremental": true,                              /* Save .tsbuildinfo files to allow for incremental compilation of projects. */

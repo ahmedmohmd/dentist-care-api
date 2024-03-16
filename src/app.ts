@@ -1,11 +1,18 @@
 import "dotenv/config";
 import express from "express";
-import prisma from "./db/db";
+import prisma from "../db/db";
+
+import globalErrorHandler from "./controllers/global-error-handler.controller";
+import checkupsRouter from "./routes/checkups.route";
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+app.use("/api/checkups", checkupsRouter);
+
+app.use(globalErrorHandler);
 
 const PORT = process.env.PORT || 3000;
 

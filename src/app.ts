@@ -3,6 +3,7 @@ import express from "express";
 import prisma from "../db/db";
 
 import globalErrorHandler from "./controllers/global-error-handler.controller";
+import adminRouter from "./routes/admin.route";
 import checkupsRouter from "./routes/checkups.route";
 import dailyDatesRouter from "./routes/daily-dates.route";
 
@@ -13,6 +14,7 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use("/api/checkups", checkupsRouter);
 app.use("/api/daily-dates", dailyDatesRouter);
+app.use("/api/admin", adminRouter);
 
 app.use(globalErrorHandler);
 

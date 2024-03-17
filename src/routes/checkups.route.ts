@@ -10,8 +10,8 @@ router.get("/:checkupId", checkupsController.getSingleCheckup);
 
 router.post("/", checkupsController.createCheckup);
 
-router.patch("/:checkupId");
+router.patch("/:checkupId", checkupsController.updateCheckup);
 
-router.delete("/:checkupId");
+router.delete("/:checkupId", checkupsController.deleteCheckup);
 
 export default router;

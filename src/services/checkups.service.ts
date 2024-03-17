@@ -1,4 +1,5 @@
 import prisma from "../../db/db";
+import { CreateCheckup, UpdateCheckup } from "../types/checkups.types";
 
 const getAllCheckups = () => {
   return prisma.checkup.findMany();
@@ -12,36 +13,34 @@ const getSingleCheckup = (id: number) => {
   });
 };
 
-enum CheckType {
-  EXAMINATION = "EXAMINATION",
-  CONSULTATION = "CONSULTATION",
-}
-
-type CreateCheckup = {
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  address: string;
-  date: string;
-  type: CheckType;
-};
-
 const createCheckup = (checkup: CreateCheckup) => {
   return prisma.checkup.create({
-    data: {
-      firstName: checkup.firstName,
-      lastName: checkup.lastName,
-      phoneNumber: checkup.phoneNumber,
-      address: checkup.address,
-      date: checkup.date,
-      type: checkup.type,
-    },
+    data: checkup,
   });
 };
 
+const updateCheckup = (checkupId: number, data: UpdateCheckup) => {
+  return prisma.checkup.update({
+    where: {
+      id: checkupId,
+    },
+
+    data: data,
+  });
+};
+
+const deleteCheckup = (checkupId: number) => {
+  return prisma.checkup.delete({
+    where: {
+      id: checkupId,
+    },
+  });
+};
 
 export default {
   getAllCheckups,
   getSingleCheckup,
   createCheckup,
+  updateCheckup,
+  deleteCheckup,
 };

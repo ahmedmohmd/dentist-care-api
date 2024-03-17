@@ -13,4 +13,18 @@ const getAllDates: RequestHandler = async (req, res, next) => {
   }
 };
 
-export default { getAllDates };
+const releaseAllDates: RequestHandler = async (req, res, next) => {
+  try {
+    await dailyDatesService.releaseAllDates();
+
+    customResponseUtil.successResponse(
+      res,
+      HttpCode.NO_CONTENT,
+      "All Dates have been released successfully"
+    );
+  } catch (error) {
+    next(error);
+  }
+};
+
+export default { getAllDates, releaseAllDates };

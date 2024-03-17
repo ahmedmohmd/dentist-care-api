@@ -20,7 +20,29 @@ const takeDate = (date: string) => {
   });
 };
 
+const releaseDate = (date: string) => {
+  return prisma.dailyDates.update({
+    where: {
+      date: date,
+    },
+
+    data: {
+      available: true,
+    },
+  });
+};
+
+const releaseAllDates = () => {
+  return prisma.dailyDates.updateMany({
+    data: {
+      available: true,
+    },
+  });
+};
+
 export default {
   getAllDates,
   takeDate,
+  releaseDate,
+  releaseAllDates,
 };

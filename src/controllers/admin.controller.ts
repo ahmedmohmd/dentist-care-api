@@ -3,6 +3,7 @@ import adminService from "../services/admin.service";
 import { UpdateAdmin } from "../types/admin.types";
 import customResponseUtil from "../utils/custom-response.util";
 import HttpCode from "../utils/http-status-code.util";
+import adminValidator from "../validators/admin.validator";
 
 const getSingleAdmin: RequestHandler<{ adminId: string }> = async (
   req,
@@ -16,7 +17,7 @@ const getSingleAdmin: RequestHandler<{ adminId: string }> = async (
       return customResponseUtil.errorResponse(
         res,
         HttpCode.BAD_REQUEST,
-        "Invalid Checkup ID parameter"
+        "Invalid Admin ID parameter"
       );
     }
 
@@ -48,7 +49,7 @@ const updateAdmin: RequestHandler<{ adminId: string }> = async (
       return customResponseUtil.errorResponse(
         res,
         HttpCode.BAD_REQUEST,
-        "Invalid Checkup ID parameter"
+        "Invalid Admin ID parameter"
       );
     }
 
@@ -60,6 +61,21 @@ const updateAdmin: RequestHandler<{ adminId: string }> = async (
         HttpCode.NOT_FOUND,
         "Admin not found"
       );
+    }
+
+    const adminDataValidationResult: any = adminValidator.UpdateAdmin.safeParse(
+      req.body
+    );
+
+    // Check Admin validity
+    for (const key of Object.keys(adminDataValidationResult)) {
+      if (!adminDataValidationResult[key]) {
+        return customResponseUtil.errorResponse(
+          res,
+          HttpCode.BAD_REQUEST,
+          "Admin is not Valid, Please try again!"
+        );
+      }
     }
 
     await adminService.updateAdmin(adminId, req.body as UpdateAdmin);
@@ -86,7 +102,7 @@ const deleteAdmin: RequestHandler<{ adminId: string }> = async (
       return customResponseUtil.errorResponse(
         res,
         HttpCode.BAD_REQUEST,
-        "Invalid Checkup ID parameter"
+        "Invalid Admin ID parameter"
       );
     }
 

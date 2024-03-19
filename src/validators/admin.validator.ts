@@ -6,7 +6,7 @@ const UpdateAdmin = z.object({
   email: z.string().email().optional(),
   password: z
     .string()
-    .min(10, {
+    .min(8, {
       message: "Your password should be at least 8 characters",
     })
     .max(24, {

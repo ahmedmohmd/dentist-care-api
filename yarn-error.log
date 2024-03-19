@@ -1,0 +1,55 @@
+Arguments: 
+  C:\Program Files\nodejs\node.exe C:\Users\a7m3d\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js install
+
+PATH: 
+  C:\Users\a7m3d\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\local\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\bin;C:\Users\a7m3d\bin;C:\Program Files\Microsoft\jdk-11.0.16.101-hotspot\bin;C:\Program Files\Common Files\Siemens\Automation\Simatic OAM\bin;C:\Program Files (x86)\Common Files\Intel\Shared Files\fortran\bin\Intel64;C:\Program Files (x86)\Common Files\Intel\Shared Libraries\redist\intel64_win\mpirt;C:\Program Files (x86)\Common Files\Intel\Shared Libraries\redist\intel64_win\compiler;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0;C:\WINDOWS\System32\OpenSSH;C:\Program Files\Microsoft SQL Server\110\Tools\Binn;C:\ProgramData\chocolatey\bin;C:\Program Files\dotnet;C:\Program Files\Docker\Docker\resources\bin;C:\protoc\bin;C:\Program Files\Microsoft SQL Server\150\Tools\Binn;C:\Program Files\nodejs;C:\Program Files\Git\cmd;C:\Program Files\Go\bin;C:\Users\a7m3d\AppData\Local\Programs\Python\Python311\Scripts;C:\Users\a7m3d\AppData\Local\Programs\Python\Python311;C:\Users\a7m3d\AppData\Local\Microsoft\WindowsApps;C:\Users\a7m3d\AppData\Local\Programs\Microsoft VS Code\bin;C:\msys64\mingw64\bin;C:\hugo\bin;C:\Users\a7m3d\go\bin;C:\Program Files\Go\bin;C:\Users\a7m3d\AppData\Local\Programs\oh-my-posh\bin;C:\Program Files\PostgreSQL\15\bin;C:\Program Files\PostgreSQL\15\lib;C:\Program Files\MongoDB\Server\5.0\bin;C:\Users\a7m3d\AppData\Local\Programs\mongosh;C:\Program Files\JetBrains\IntelliJ IDEA 2023.1.2\bin;C:\protoc\bin;C:\Users\a7m3d\AppData\Roaming\npm;C:\Program Files\nodejs;C:\Users\a7m3d\go\bin;C:\Program Files\Git\usr\bin\vendor_perl;C:\Program Files\Git\usr\bin\core_perl
+
+Yarn version: 
+  1.22.19
+
+Node version: 
+  21.2.0
+
+Platform: 
+  win32 x64
+
+Trace: 
+  Error: EPERM: operation not permitted, unlink 'E:\Work\S.E\Real\dintist-care-api\node_modules\prisma\engines\efd2449663b3d73d637ea1fd226bafbcf45b3102\query_engine-windows.dll.node'
+
+npm manifest: 
+  {
+    "name": "dintist-care-api",
+    "version": "1.0.0",
+    "main": "./src/app.js",
+    "license": "MIT",
+    "scripts": {
+      "dev": "nodemon ./src/app.ts"
+    },
+    "devDependencies": {
+      "@types/bcrypt": "^5.0.2",
+      "@types/express": "~4.17.21",
+      "@types/jsonwebtoken": "^9.0.6",
+      "@types/node": "^20.11.25",
+      "@types/nodemon": "~1.19.6",
+      "dotenv": "^16.4.5",
+      "nodemon": "^3.1.0",
+      "prisma": "^5.11.0",
+      "ts-node": "^10.9.2",
+      "typescript": "^5.4.2",
+      "typesync": "^0.12.1"
+    },
+    "dependencies": {
+      "@prisma/client": "^5.11.0",
+      "bcrypt": "^5.1.1",
+      "express": "^4.18.3",
+      "jsonwebtoken": "^9.0.2",
+      "pg": "^8.11.3",
+      "zod": "^3.22.4"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

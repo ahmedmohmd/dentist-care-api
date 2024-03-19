@@ -17,7 +17,7 @@ const releaseAllDates: RequestHandler = async (req, res, next) => {
   try {
     await dailyDatesService.releaseAllDates();
 
-    customResponseUtil.successResponse(
+    return customResponseUtil.successResponse(
       res,
       HttpCode.NO_CONTENT,
       "All Dates have been released successfully"

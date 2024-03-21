@@ -10,6 +10,49 @@ const SignIn = z.object({
     .max(24, {
       message: "Your password should be at most 24 characters",
     }),
+  role: z.enum(["ADMIN", "MODERATOR", "PATIENT"]),
 });
 
-export default { SignIn };
+const SignUp = z.object({
+  firstName: z.string(),
+  lastName: z.string(),
+  email: z.string().email(),
+  password: z
+    .string()
+    .min(8, {
+      message: "Your password should be at least 8 characters",
+    })
+    .max(24, {
+      message: "Your password should be at most 24 characters",
+    }),
+  phoneNumber: z.string(),
+  address: z.string().optional(),
+});
+
+// const SignInModerator = z.object({
+//   email: z.string().email(),
+//   password: z
+//     .string()
+//     .min(8, {
+//       message: "Your password should be at least 8 characters",
+//     })
+//     .max(24, {
+//       message: "Your password should be at most 24 characters",
+//     }),
+//   role: z.enum(["MODERATOR"]),
+// });
+
+// const SignInPatient = z.object({
+//   email: z.string().email(),
+//   password: z
+//     .string()
+//     .min(8, {
+//       message: "Your password should be at least 8 characters",
+//     })
+//     .max(24, {
+//       message: "Your password should be at most 24 characters",
+//     }),
+//   role: z.enum(["PATIENT"]),
+// });
+
+export default { SignIn, SignUp };

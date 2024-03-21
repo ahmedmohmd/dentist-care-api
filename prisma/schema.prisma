@@ -13,25 +13,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Checkup {
-  id          Int    @id @default(autoincrement())
-  firstName   String
-  lastName    String
-  phoneNumber String
-  address     String
-  date        String
-
-  type CheckupType @default(EXAMINATION)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-enum CheckupType {
-  EXAMINATION
-  CONSULTATION
-}
-
 model Admin {
   id          Int      @id @default(autoincrement())
   firstName   String
@@ -39,12 +20,66 @@ model Admin {
   email       String   @unique
   password    String
   phoneNumber String
+  address     String
+  role        Role     @default(ADMIN)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Moderator {
+  id          Int      @id @default(autoincrement())
+  firstName   String
+  lastName    String
+  email       String   @unique
+  password    String
+  phoneNumber String
+  address     String
+  role        Role     @default(PATIENT)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Patient {
+  id          Int       @id @default(autoincrement())
+  firstName   String
+  lastName    String
+  email       String    @unique
+  password    String
+  phoneNumber String
+  address     String
+  checkups    Checkup[] 
+  role        Role      @default(PATIENT)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Checkup {
+  id          Int         @id @default(autoincrement())
+  firstName   String
+  lastName    String
+  phoneNumber String
+  address     String
+  date        String
+  type        CheckupType @default(EXAMINATION)
+  Patient     Patient?    @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  patientId   Int?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 }
 
 model DailyDates {
   id        Int     @id @default(autoincrement())
   date      String  @unique
   available Boolean @default(true)
+}
+
+enum CheckupType {
+  EXAMINATION
+  CONSULTATION
+}
+
+enum Role {
+  ADMIN
+  MODERATOR
+  PATIENT
 }

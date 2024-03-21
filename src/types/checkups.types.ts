@@ -10,6 +10,7 @@ type CreateCheckup = {
   address: string;
   date: string;
   type: CheckType;
+  patientId: number;
 };
 
 type UpdateCheckup = {

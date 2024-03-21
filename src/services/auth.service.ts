@@ -1,26 +1,53 @@
 import prisma from "../../db/db";
+import Role from "../types/role.types";
+import hashPasswordUtil from "../utils/hash-password.util";
 import HttpCode from "../utils/http-status-code.util";
 import jwtUtil from "../utils/jwt.util";
 import { RequestError } from "../utils/request-error.util";
 
-const signIn = async (email: string, password: string) => {
+const signIn = async (email: string, password: string, role: Role) => {
   if (!email || !password) {
     throw new RequestError("Invalid email or password!", HttpCode.BAD_REQUEST);
   }
 
-  const targetUser = await prisma.admin.findUnique({
-    where: {
-      email: email,
-    },
-  });
+  const signInStrategy = {
+    ADMIN: prisma.admin.findUnique({
+      where: {
+        email: email,
+        role: role,
+      },
+    }),
+    MODERATOR: prisma.moderator.findUnique({
+      where: {
+        email: email,
+        role: role,
+      },
+    }),
+    PATIENT: prisma.patient.findUnique({
+      where: {
+        email: email,
+        role: role,
+      },
+    }),
+  };
+
+  let targetUser = await signInStrategy[role];
 
   if (!targetUser) {
-    throw new RequestError("User not found!", HttpCode.NOT_FOUND);
+    throw new RequestError(
+      `${role.toLowerCase()} not found!`,
+      HttpCode.NOT_FOUND
+    );
   }
 
-  if (password !== targetUser.password) {
+  const passwordValidationResult = await hashPasswordUtil.check(
+    password,
+    targetUser.password
+  );
+
+  if (!passwordValidationResult) {
     throw new RequestError(
-      "Sorry, User Password is Incorrect",
+      `Sorry, ${role.toLowerCase()} Password is Incorrect`,
       HttpCode.NOT_FOUND
     );
   }
@@ -30,4 +57,10 @@ const signIn = async (email: string, password: string) => {
   return token;
 };
 
-export default { signIn };
+const signUp = (patientData: any) => {
+  return prisma.patient.create({
+    data: patientData,
+  });
+};
+
+export default { signIn, signUp };

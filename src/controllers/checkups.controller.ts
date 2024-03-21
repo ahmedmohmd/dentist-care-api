@@ -1,14 +1,15 @@
-import { RequestHandler } from "express";
+import { NextFunction, RequestHandler, Response } from "express";
 import checkupsService from "../services/checkups.service";
 import dailyDatesService from "../services/daily-dates.service";
 import { CreateCheckup, UpdateCheckup } from "../types/checkups.types";
+import { CustomRequest } from "../types/custom-request.types";
 import customResponseUtil from "../utils/custom-response.util";
 import HttpCode from "../utils/http-status-code.util";
 import checkupsValidator from "../validators/checkups.validator";
 
-const getAllCheckups: RequestHandler = async (_, res, next) => {
+const getAllCheckups: RequestHandler = async (req: any, res, next) => {
   try {
-    const checkups = await checkupsService.getAllCheckups();
+    const checkups = await checkupsService.getAllCheckups(req.user?.id);
 
     return customResponseUtil.successResponse(res, HttpCode.OK, checkups);
   } catch (error) {
@@ -17,7 +18,7 @@ const getAllCheckups: RequestHandler = async (_, res, next) => {
 };
 
 const getSingleCheckup: RequestHandler<{ checkupId: string }> = async (
-  req,
+  req: any,
   res,
   next
 ) => {
@@ -32,7 +33,10 @@ const getSingleCheckup: RequestHandler<{ checkupId: string }> = async (
       );
     }
 
-    const targetCheckup = await checkupsService.getSingleCheckup(checkupId);
+    const targetCheckup = await checkupsService.getSingleCheckup(
+      checkupId,
+      req.user.id
+    );
 
     if (!targetCheckup) {
       return customResponseUtil.errorResponse(
@@ -48,7 +52,7 @@ const getSingleCheckup: RequestHandler<{ checkupId: string }> = async (
   }
 };
 
-const createCheckup: RequestHandler = async (req, res, next) => {
+const createCheckup: RequestHandler = async (req: any, res, next) => {
   try {
     const validatorResult: any = checkupsValidator.CreateCheckup.safeParse(
       req.body as CreateCheckup
@@ -82,7 +86,7 @@ const createCheckup: RequestHandler = async (req, res, next) => {
     }
 
     await dailyDatesService.takeDate((req.body as CreateCheckup).date);
-    await checkupsService.createCheckup(req.body as CreateCheckup);
+    await checkupsService.createCheckup(req.body as CreateCheckup, req.user.id);
 
     return customResponseUtil.successResponse(
       res,
@@ -95,7 +99,7 @@ const createCheckup: RequestHandler = async (req, res, next) => {
 };
 
 const updateCheckup: RequestHandler<{ checkupId: string }> = async (
-  req,
+  req: any,
   res,
   next
 ) => {
@@ -110,7 +114,10 @@ const updateCheckup: RequestHandler<{ checkupId: string }> = async (
       );
     }
 
-    const targetCheckup = await checkupsService.getSingleCheckup(checkupId);
+    const targetCheckup = await checkupsService.getSingleCheckup(
+      checkupId,
+      req.user.id
+    );
 
     if (!targetCheckup) {
       return customResponseUtil.errorResponse(
@@ -154,7 +161,11 @@ const updateCheckup: RequestHandler<{ checkupId: string }> = async (
       await dailyDatesService.takeDate((req.body as UpdateCheckup).date!);
     }
 
-    await checkupsService.updateCheckup(checkupId, req.body as UpdateCheckup);
+    await checkupsService.updateCheckup(
+      req.user.id,
+      checkupId,
+      req.body as UpdateCheckup
+    );
 
     return customResponseUtil.successResponse(
       res,
@@ -167,7 +178,7 @@ const updateCheckup: RequestHandler<{ checkupId: string }> = async (
 };
 
 const deleteCheckup: RequestHandler<{ checkupId: string }> = async (
-  req,
+  req: any,
   res,
   next
 ) => {
@@ -182,7 +193,10 @@ const deleteCheckup: RequestHandler<{ checkupId: string }> = async (
       );
     }
 
-    const targetCheckup = await checkupsService.getSingleCheckup(checkupId);
+    const targetCheckup = await checkupsService.getSingleCheckup(
+      checkupId,
+      req.user.id
+    );
 
     if (!targetCheckup) {
       return customResponseUtil.errorResponse(
@@ -193,7 +207,7 @@ const deleteCheckup: RequestHandler<{ checkupId: string }> = async (
     }
 
     await dailyDatesService.releaseDate(targetCheckup.date);
-    await checkupsService.deleteCheckup(checkupId);
+    await checkupsService.deleteCheckup(checkupId, req.user.id);
 
     return customResponseUtil.successResponse(
       res,

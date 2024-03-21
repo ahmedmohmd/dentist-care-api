@@ -14,6 +14,7 @@ const UpdateAdmin = z.object({
     })
     .optional(),
   phoneNumber: z.string().optional(),
+  address: z.string().optional(),
 });
 
 export default { UpdateAdmin };

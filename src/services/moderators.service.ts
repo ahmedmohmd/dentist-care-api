@@ -2,7 +2,7 @@ import prisma from "../../db/db";
 import { CreateModerator } from "../types/moderators.types";
 
 const getAllModerators = () => {
-  return prisma.moderator.findMany({
+  return prisma.user.findMany({
     where: {
       role: "MODERATOR",
     },
@@ -10,7 +10,7 @@ const getAllModerators = () => {
 };
 
 const getSingleModerator = (moderatorId: number) => {
-  return prisma.moderator.findUnique({
+  return prisma.user.findUnique({
     where: {
       id: moderatorId,
       role: "MODERATOR",
@@ -19,13 +19,13 @@ const getSingleModerator = (moderatorId: number) => {
 };
 
 const createModerator = (moderatorData: any) => {
-  return prisma.moderator.create({
+  return prisma.user.create({
     data: moderatorData,
   });
 };
 
 const updateModerator = (moderatorId: number, moderatorData: any) => {
-  return prisma.moderator.update({
+  return prisma.user.update({
     where: {
       id: moderatorId,
       role: "MODERATOR",
@@ -36,7 +36,7 @@ const updateModerator = (moderatorId: number, moderatorData: any) => {
 };
 
 const deleteModerator = (moderatorId: number) => {
-  return prisma.moderator.delete({
+  return prisma.user.delete({
     where: {
       id: moderatorId,
       role: "MODERATOR",

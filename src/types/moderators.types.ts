@@ -20,7 +20,7 @@ type CreateModerator = {
   password: string;
   phoneNumber: string;
   address: string;
-  role: $Enums.Role;
+  role: "$Enums.Role";
 };
 
 type UpdateModerator = {

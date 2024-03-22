@@ -8,7 +8,7 @@ const router = express.Router();
 router.get(
   "/",
   authMiddleware.authUser,
-  checkRoleMiddleware.checkRole(["MODERATOR"]),
+  checkRoleMiddleware.checkRole(["ADMIN", "MODERATOR"]),
   moderatorsController.getAllModerators
 );
 

@@ -13,33 +13,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Admin {
-  id          Int      @id @default(autoincrement())
-  firstName   String
-  lastName    String
-  email       String   @unique
-  password    String
-  phoneNumber String
-  address     String
-  role        Role     @default(ADMIN)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-model Moderator {
-  id          Int      @id @default(autoincrement())
-  firstName   String
-  lastName    String
-  email       String   @unique
-  password    String
-  phoneNumber String
-  address     String
-  role        Role     @default(PATIENT)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-model Patient {
+model User {
   id          Int       @id @default(autoincrement())
   firstName   String
   lastName    String
@@ -47,7 +21,7 @@ model Patient {
   password    String
   phoneNumber String
   address     String
-  checkups    Checkup[] 
+  checkups    Checkup[]
   role        Role      @default(PATIENT)
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
@@ -61,8 +35,8 @@ model Checkup {
   address     String
   date        String
   type        CheckupType @default(EXAMINATION)
-  Patient     Patient?    @relation(fields: [patientId], references: [id], onDelete: Cascade)
-  patientId   Int?
+  User        User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      Int?
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 }

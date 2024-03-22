@@ -14,6 +14,7 @@ const CreatePatient = z.object({
     }),
   phoneNumber: z.string(),
   address: z.string().optional(),
+  role: z.enum(["PATIENT"]),
 });
 
 const UpdatePatient = z.object({

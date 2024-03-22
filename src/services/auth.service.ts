@@ -10,28 +10,12 @@ const signIn = async (email: string, password: string, role: Role) => {
     throw new RequestError("Invalid email or password!", HttpCode.BAD_REQUEST);
   }
 
-  const signInStrategy = {
-    ADMIN: prisma.admin.findUnique({
-      where: {
-        email: email,
-        role: role,
-      },
-    }),
-    MODERATOR: prisma.moderator.findUnique({
-      where: {
-        email: email,
-        role: role,
-      },
-    }),
-    PATIENT: prisma.patient.findUnique({
-      where: {
-        email: email,
-        role: role,
-      },
-    }),
-  };
-
-  let targetUser = await signInStrategy[role];
+  let targetUser = await prisma.user.findUnique({
+    where: {
+      email: email,
+      role: role,
+    },
+  });
 
   if (!targetUser) {
     throw new RequestError(
@@ -58,7 +42,7 @@ const signIn = async (email: string, password: string, role: Role) => {
 };
 
 const signUp = (patientData: any) => {
-  return prisma.patient.create({
+  return prisma.user.create({
     data: patientData,
   });
 };

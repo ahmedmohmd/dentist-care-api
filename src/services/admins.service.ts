@@ -3,7 +3,7 @@ import prisma from "../../db/db";
 import { UpdateAdmin } from "../types/admins.types";
 
 const getSingleAdmin = (adminId: number) => {
-  return prisma.admin.findUnique({
+  return prisma.user.findUnique({
     where: {
       id: adminId,
       role: "ADMIN",
@@ -12,7 +12,7 @@ const getSingleAdmin = (adminId: number) => {
 };
 
 const updateAdmin = (adminId: number, adminData: UpdateAdmin) => {
-  return prisma.admin.update({
+  return prisma.user.update({
     where: {
       id: adminId,
       role: "ADMIN",
@@ -23,7 +23,7 @@ const updateAdmin = (adminId: number, adminData: UpdateAdmin) => {
 };
 
 const deleteAdmin = (adminId: number) => {
-  return prisma.admin.delete({
+  return prisma.user.delete({
     where: {
       id: adminId,
       role: "ADMIN",
@@ -32,9 +32,10 @@ const deleteAdmin = (adminId: number) => {
 };
 
 const convertToAdmin = (moderatorId: number) => {
-  return prisma.moderator.update({
+  return prisma.user.update({
     where: {
       id: moderatorId,
+      role: "MODERATOR",
     },
     data: {
       role: "ADMIN",
@@ -43,9 +44,10 @@ const convertToAdmin = (moderatorId: number) => {
 };
 
 const convertToModerator = (adminId: number) => {
-  return prisma.admin.update({
+  return prisma.user.update({
     where: {
       id: adminId,
+      role: "ADMIN",
     },
     data: {
       role: "MODERATOR",

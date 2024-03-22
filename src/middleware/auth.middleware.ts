@@ -22,19 +22,11 @@ const authUser = async (req: Request, res: Response, next: NextFunction) => {
         .json({ message: "Sorry, are not Authenticated!" });
     }
 
-    const authUserStrategy: any = {
-      ADMIN: prisma.admin.findUnique({
-        where: { email: decodedToken.email, id: decodedToken.id },
-      }),
-      MODERATOR: prisma.moderator.findUnique({
-        where: { email: decodedToken.email, id: decodedToken.id },
-      }),
-      PATIENT: prisma.patient.findUnique({
-        where: { email: decodedToken.email, id: decodedToken.id },
-      }),
-    };
+    let targetUser = await prisma.user.findUnique({
+      where: { email: decodedToken.email, id: decodedToken.id },
+    });
 
-    let targetUser = await authUserStrategy[decodedToken.role];
+    console.log(targetUser);
 
     if (!targetUser) {
       return res

@@ -24,7 +24,7 @@ app.use("/api/auth", authRouter);
 
 app.use(globalErrorHandler);
 
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT || 3000);
 
 async function main() {
   app.listen(PORT, () => {

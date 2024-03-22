@@ -4,7 +4,7 @@ import { CreateCheckup, UpdateCheckup } from "../types/checkups.types";
 const getAllCheckups = (patientId: number) => {
   return prisma.checkup.findMany({
     where: {
-      patientId: patientId,
+      userId: patientId,
     },
   });
 };
@@ -13,7 +13,7 @@ const getSingleCheckup = (id: number, patientId: number) => {
   return prisma.checkup.findFirst({
     where: {
       id,
-      patientId,
+      userId: patientId,
     },
   });
 };
@@ -26,7 +26,7 @@ const createCheckup = (checkup: any, patientId: number) => {
       address: checkup.address,
       date: checkup.date,
       phoneNumber: checkup.phoneNumber,
-      patientId: patientId,
+      userId: patientId,
       type: checkup.type,
     },
   });
@@ -40,7 +40,7 @@ const updateCheckup = (
   return prisma.checkup.update({
     where: {
       id: checkupId,
-      patientId: patientId,
+      userId: patientId,
     },
 
     data: data,
@@ -51,7 +51,7 @@ const deleteCheckup = (checkupId: number, patientId: number) => {
   return prisma.checkup.delete({
     where: {
       id: checkupId,
-      patientId: patientId,
+      userId: patientId,
     },
   });
 };

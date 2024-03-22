@@ -2,7 +2,7 @@ import prisma from "../../db/db";
 import hashPasswordUtil from "../utils/hash-password.util";
 
 const getAllPatients = () => {
-  return prisma.patient.findMany({
+  return prisma.user.findMany({
     where: {
       role: "PATIENT",
     },
@@ -10,7 +10,7 @@ const getAllPatients = () => {
 };
 
 const getSinglePatient = (patientId: number) => {
-  return prisma.patient.findUnique({
+  return prisma.user.findUnique({
     where: {
       id: patientId,
       role: "PATIENT",
@@ -19,7 +19,7 @@ const getSinglePatient = (patientId: number) => {
 };
 
 const getPatientByEmail = (patientEmail: string) => {
-  return prisma.patient.findUnique({
+  return prisma.user.findUnique({
     where: {
       role: "PATIENT",
       email: patientEmail,
@@ -28,7 +28,7 @@ const getPatientByEmail = (patientEmail: string) => {
 };
 
 const createPatient = async (patientData: any) => {
-  return prisma.patient.create({
+  return prisma.user.create({
     data: {
       address: patientData.address,
       firstName: patientData.firstName,
@@ -42,7 +42,7 @@ const createPatient = async (patientData: any) => {
 };
 
 const updatePatient = (patientId: number, patientData: any) => {
-  return prisma.patient.update({
+  return prisma.user.update({
     where: {
       id: patientId,
       role: "PATIENT",
@@ -53,7 +53,7 @@ const updatePatient = (patientId: number, patientData: any) => {
 };
 
 const deletePatient = (patientId: number) => {
-  return prisma.patient.delete({
+  return prisma.user.delete({
     where: {
       id: patientId,
       role: "PATIENT",

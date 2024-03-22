@@ -23,7 +23,7 @@ router.post(
   "/convert-to-moderator/:adminId",
   authMiddleware.authUser,
   checkRoleMiddleware.checkRole(["ADMIN"]),
-  adminController.convertToAdmin
+  adminController.convertToModerator
 );
 
 router.patch(

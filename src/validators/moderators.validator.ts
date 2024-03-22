@@ -14,6 +14,7 @@ const CreateModerator = z.object({
     }),
   phoneNumber: z.string(),
   address: z.string().optional(),
+  role: z.enum(["MODERATOR"]),
 });
 
 const UpdateModerator = z.object({

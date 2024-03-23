@@ -1,10 +1,37 @@
 import prisma from "../../db/db";
 import { CreateCheckup, UpdateCheckup } from "../types/checkups.types";
 
-const getAllCheckups = (patientId: number) => {
+const getAllCheckups = (
+  skip: number,
+  take: number,
+  sortingOrder: "desc" | "asc" = "desc"
+) => {
+  return prisma.checkup.findMany({
+    skip: skip,
+    take: take,
+
+    orderBy: {
+      createdAt: sortingOrder,
+    },
+  });
+};
+
+const getAllPatientCheckups = (
+  patientId: number,
+  skip: number,
+  take: number,
+  sortingOrder: "desc" | "asc" = "desc"
+) => {
   return prisma.checkup.findMany({
     where: {
       userId: patientId,
+    },
+
+    skip: skip,
+    take: take,
+
+    orderBy: {
+      createdAt: sortingOrder,
     },
   });
 };
@@ -18,7 +45,7 @@ const getSingleCheckup = (id: number, patientId: number) => {
   });
 };
 
-const createCheckup = (checkup: any, patientId: number) => {
+const createCheckup = (checkup: CreateCheckup, patientId: number) => {
   return prisma.checkup.create({
     data: {
       firstName: checkup.firstName,
@@ -58,6 +85,7 @@ const deleteCheckup = (checkupId: number, patientId: number) => {
 
 export default {
   getAllCheckups,
+  getAllPatientCheckups,
   getSingleCheckup,
   createCheckup,
   updateCheckup,

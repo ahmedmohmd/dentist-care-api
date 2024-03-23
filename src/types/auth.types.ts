@@ -15,16 +15,4 @@ type SignUp = {
   address: string;
 };
 
-// type SignInModerator = {
-//   email: string;
-//   password: string;
-//   role: "MODERATOR";
-// };
-
-// type SignInPatient = {
-//   email: string;
-//   password: string;
-//   role: "PATIENT";
-// };
-
 export { SignIn, SignUp };

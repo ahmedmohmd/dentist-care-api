@@ -8,9 +8,9 @@ const authUser = async (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res
-        .status(HttpCode.UNAUTHORIZED)
-        .json({ message: "Sorry, you are not logged in!" });
+      return res.status(HttpCode.UNAUTHORIZED).json({
+        message: "Access Denied: Missing or invalid authorization header",
+      });
     }
 
     const token = authHeader.split(" ")[1];
@@ -19,7 +19,7 @@ const authUser = async (req: Request, res: Response, next: NextFunction) => {
     if (!decodedToken || typeof decodedToken === "string") {
       return res
         .status(HttpCode.UNAUTHORIZED)
-        .json({ message: "Sorry, are not Authenticated!" });
+        .json({ message: "Access Denied: Invalid token provided" });
     }
 
     let targetUser = await prisma.user.findUnique({
@@ -29,9 +29,9 @@ const authUser = async (req: Request, res: Response, next: NextFunction) => {
     console.log(targetUser);
 
     if (!targetUser) {
-      return res
-        .status(HttpCode.UNAUTHORIZED)
-        .json({ message: "User not Found!" });
+      return res.status(HttpCode.UNAUTHORIZED).json({
+        message: "Access Denied: User not found or not authenticated",
+      });
     }
 
     Object.defineProperty(req, "user", {

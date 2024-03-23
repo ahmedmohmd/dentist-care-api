@@ -1,15 +1,39 @@
-import { NextFunction, RequestHandler, Response } from "express";
+import { RequestHandler } from "express";
+import config from "../../config/config";
 import checkupsService from "../services/checkups.service";
 import dailyDatesService from "../services/daily-dates.service";
 import { CreateCheckup, UpdateCheckup } from "../types/checkups.types";
-import { CustomRequest } from "../types/custom-request.types";
+import checkCheckupsQueryParams from "../utils/check-checkups-query-params.util";
 import customResponseUtil from "../utils/custom-response.util";
 import HttpCode from "../utils/http-status-code.util";
 import checkupsValidator from "../validators/checkups.validator";
 
-const getAllCheckups: RequestHandler = async (req: any, res, next) => {
+const getAllCheckups: RequestHandler = async (req, res, next) => {
   try {
-    const checkups = await checkupsService.getAllCheckups(req.user?.id);
+    const { skip, take, sortingOrder } = checkCheckupsQueryParams(req, res);
+
+    const checkups = await checkupsService.getAllCheckups(
+      skip,
+      take,
+      sortingOrder
+    );
+
+    return customResponseUtil.successResponse(res, HttpCode.OK, checkups);
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getAllPatientCheckups: RequestHandler = async (req, res, next) => {
+  try {
+    const { skip, take, sortingOrder } = checkCheckupsQueryParams(req, res);
+
+    const checkups = await checkupsService.getAllPatientCheckups(
+      (req as any).user?.id,
+      skip,
+      take,
+      sortingOrder
+    );
 
     return customResponseUtil.successResponse(res, HttpCode.OK, checkups);
   } catch (error) {
@@ -18,7 +42,7 @@ const getAllCheckups: RequestHandler = async (req: any, res, next) => {
 };
 
 const getSingleCheckup: RequestHandler<{ checkupId: string }> = async (
-  req: any,
+  req,
   res,
   next
 ) => {
@@ -35,7 +59,7 @@ const getSingleCheckup: RequestHandler<{ checkupId: string }> = async (
 
     const targetCheckup = await checkupsService.getSingleCheckup(
       checkupId,
-      req.user.id
+      (req as any).user.id
     );
 
     if (!targetCheckup) {
@@ -58,15 +82,15 @@ const createCheckup: RequestHandler = async (req: any, res, next) => {
       req.body as CreateCheckup
     );
 
-    // Check Checkup validity
-    for (const key of Object.keys(validatorResult)) {
-      if (!validatorResult[key]) {
-        return customResponseUtil.errorResponse(
-          res,
-          HttpCode.BAD_REQUEST,
-          "Checkup is not Valid, Please try again!"
-        );
-      }
+    if (!validatorResult.success) {
+      const errorMessage = validatorResult.error.errors
+        .map((error: any) => error.message)
+        .join("; ");
+      return customResponseUtil.errorResponse(
+        res,
+        HttpCode.BAD_REQUEST,
+        `Checkup is not valid: [${errorMessage}]`
+      );
     }
 
     // Check Checkup Date
@@ -127,18 +151,19 @@ const updateCheckup: RequestHandler<{ checkupId: string }> = async (
       );
     }
 
-    const checkupValidateResult: any =
-      checkupsValidator.UpdateCheckup.safeParse(req.body as UpdateCheckup);
+    const validatorResult: any = checkupsValidator.CreateCheckup.safeParse(
+      req.body as CreateCheckup
+    );
 
-    // Check Checkup validity
-    for (const key of Object.keys(checkupValidateResult)) {
-      if (!checkupValidateResult[key]) {
-        return customResponseUtil.errorResponse(
-          res,
-          HttpCode.BAD_REQUEST,
-          "Checkup is not Valid, Please try again!"
-        );
-      }
+    if (!validatorResult.success) {
+      const errorMessage = validatorResult.error.errors
+        .map((error: any) => error.message)
+        .join("; ");
+      return customResponseUtil.errorResponse(
+        res,
+        HttpCode.BAD_REQUEST,
+        `Checkup is not valid: [${errorMessage}]`
+      );
     }
 
     if ((req.body as UpdateCheckup).date) {
@@ -225,4 +250,5 @@ export default {
   createCheckup,
   updateCheckup,
   deleteCheckup,
+  getAllPatientCheckups,
 };

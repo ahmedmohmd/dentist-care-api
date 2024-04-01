@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import prisma from "../db/db";
 
+import constantsConfig from "../config/constants.config";
 import globalErrorHandler from "./controllers/global-error-handler.controller";
 import adminsRouter from "./routes/admins.route";
 import authRouter from "./routes/auth.route";
@@ -24,7 +25,7 @@ app.use("/api/auth", authRouter);
 
 app.use(globalErrorHandler);
 
-const PORT = Number(process.env.PORT || 3000);
+const PORT = Number(process.env.PORT || constantsConfig.port);
 
 async function main() {
   app.listen(PORT, () => {

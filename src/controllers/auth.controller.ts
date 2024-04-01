@@ -1,13 +1,13 @@
 import { RequestHandler } from "express";
+import { SignIn } from "../dto/auth.dto";
+import { CreateModerator } from "../dto/moderators.dto";
+import { CreatePatient } from "../dto/patients.dto";
 import authService from "../services/auth.service";
 import patientsService from "../services/patients.service";
-import { SignIn } from "../types/auth.types";
-import { CreateModerator } from "../types/moderators.types";
-import { CreatePatient } from "../types/patients.types";
 import customResponseUtil from "../utils/custom-response.util";
 import HttpCode from "../utils/http-status-code.util";
 import authValidator from "../validators/auth.validator";
-import patientsValidator from "../validators/patient.validator";
+import patientsValidator from "../validators/patients.validator";
 
 const signIn: RequestHandler = async (req, res, next) => {
   try {

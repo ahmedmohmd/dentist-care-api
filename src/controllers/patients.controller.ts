@@ -1,9 +1,9 @@
 import { RequestHandler } from "express";
+import { CreatePatient, UpdatePatient } from "../dto/patients.dto";
 import patientsService from "../services/patients.service";
-import { CreatePatient, UpdatePatient } from "../types/patients.types";
 import customResponseUtil from "../utils/custom-response.util";
 import HttpCode from "../utils/http-status-code.util";
-import patientsValidator from "../validators/patient.validator";
+import patientsValidator from "../validators/patients.validator";
 
 const getAllPatients: RequestHandler = async (req, res, next) => {
   try {

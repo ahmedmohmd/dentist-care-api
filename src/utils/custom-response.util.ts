@@ -5,12 +5,6 @@ const successResponse = (
   statusCode: number = 200,
   data: any = null
 ) => {
-  // if (statusCode === 200 && data) {
-  //   return res.status(statusCode).json({ success: true, data });
-  // }
-
-  // return res.status(statusCode).send(data);
-
   return res.status(statusCode).json({ success: true, data });
 };
 

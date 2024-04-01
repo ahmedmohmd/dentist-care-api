@@ -1,5 +1,5 @@
 import prisma from "../../db/db";
-import { CreateCheckup, UpdateCheckup } from "../types/checkups.types";
+import { CreateCheckup, UpdateCheckup } from "../dto/checkups.dto";
 
 const getAllCheckups = (
   skip: number,

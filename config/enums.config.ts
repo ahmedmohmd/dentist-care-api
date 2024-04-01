@@ -9,10 +9,4 @@ enum CheckupType {
   CONSULTATION = "CONSULTATION",
 }
 
-const config = {
-  limit: 2,
-  userRole: UserRole,
-  checkupType: CheckupType,
-};
-
-export default config;
+export default { CheckupType, UserRole };

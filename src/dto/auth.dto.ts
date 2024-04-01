@@ -1,4 +1,4 @@
-import Role from "./role.types";
+import Role from "../types/role.types";
 
 type SignIn = {
   email: string;

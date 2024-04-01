@@ -1,6 +1,6 @@
 import express from "express";
 
-import config from "../../config/config";
+import enumsConfig from "../../config/enums.config";
 import checkupsController from "../controllers/checkups.controller";
 import authMiddleware from "../middleware/auth.middleware";
 import checkRoleMiddleware from "../middleware/check-role.middleware";
@@ -11,8 +11,8 @@ router.get(
   "/all",
   authMiddleware.authUser,
   checkRoleMiddleware.checkRole([
-    config.userRole.ADMIN,
-    config.userRole.MODERATOR,
+    enumsConfig.UserRole.ADMIN,
+    enumsConfig.UserRole.MODERATOR,
   ]),
   checkupsController.getAllCheckups
 );
@@ -21,9 +21,9 @@ router.get(
   "/",
   authMiddleware.authUser,
   checkRoleMiddleware.checkRole([
-    config.userRole.ADMIN,
-    config.userRole.MODERATOR,
-    config.userRole.PATIENT,
+    enumsConfig.UserRole.ADMIN,
+    enumsConfig.UserRole.MODERATOR,
+    enumsConfig.UserRole.PATIENT,
   ]),
   checkupsController.getAllCheckups
 );
@@ -32,9 +32,9 @@ router.get(
   "/:checkupId",
   authMiddleware.authUser,
   checkRoleMiddleware.checkRole([
-    config.userRole.ADMIN,
-    config.userRole.MODERATOR,
-    config.userRole.PATIENT,
+    enumsConfig.UserRole.ADMIN,
+    enumsConfig.UserRole.MODERATOR,
+    enumsConfig.UserRole.PATIENT,
   ]),
   checkupsController.getSingleCheckup
 );
@@ -42,14 +42,14 @@ router.get(
 router.post(
   "/",
   authMiddleware.authUser,
-  checkRoleMiddleware.checkRole([config.userRole.PATIENT]),
+  checkRoleMiddleware.checkRole([enumsConfig.UserRole.PATIENT]),
   checkupsController.createCheckup
 );
 
 router.patch(
   "/:checkupId",
   authMiddleware.authUser,
-  checkRoleMiddleware.checkRole([config.userRole.PATIENT]),
+  checkRoleMiddleware.checkRole([enumsConfig.UserRole.PATIENT]),
   checkupsController.updateCheckup
 );
 
@@ -57,9 +57,9 @@ router.delete(
   "/:checkupId",
   authMiddleware.authUser,
   checkRoleMiddleware.checkRole([
-    config.userRole.ADMIN,
-    config.userRole.MODERATOR,
-    config.userRole.PATIENT,
+    enumsConfig.UserRole.ADMIN,
+    enumsConfig.UserRole.MODERATOR,
+    enumsConfig.UserRole.PATIENT,
   ]),
   checkupsController.deleteCheckup
 );

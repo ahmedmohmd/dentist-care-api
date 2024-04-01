@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
-import config from "../../config/config";
+import constantsConfig from "../../config/constants.config";
 import customResponseUtil from "./custom-response.util";
 import HttpCode from "./http-status-code.util";
 
 const checkCheckupsQueryParams = (req: Request, res: Response): any => {
   const {
     page = "1",
-    limit = config.limit.toString(),
+    limit = constantsConfig.limitParam.toString(),
     sort = "desc",
   } = req.query;
 
@@ -29,9 +29,9 @@ const checkCheckupsQueryParams = (req: Request, res: Response): any => {
     );
   }
 
-  const skip = (parsedPage - 1) * config.limit;
+  const skip = (parsedPage - 1) * constantsConfig.limitParam;
   const sortingOrder = sort === "asc" ? "asc" : "desc";
-  const take = parsedLimit || config.limit;
+  const take = parsedLimit || constantsConfig.limitParam;
 
   return { skip, take, sortingOrder };
 };

@@ -1,8 +1,7 @@
 import { RequestHandler } from "express";
-import config from "../../config/config";
+import { CreateCheckup, UpdateCheckup } from "../dto/checkups.dto";
 import checkupsService from "../services/checkups.service";
 import dailyDatesService from "../services/daily-dates.service";
-import { CreateCheckup, UpdateCheckup } from "../types/checkups.types";
 import checkCheckupsQueryParams from "../utils/check-checkups-query-params.util";
 import customResponseUtil from "../utils/custom-response.util";
 import HttpCode from "../utils/http-status-code.util";

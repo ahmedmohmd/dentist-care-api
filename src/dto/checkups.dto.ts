@@ -13,13 +13,6 @@ type CreateCheckup = {
   patientId: number;
 };
 
-type UpdateCheckup = {
-  firstName?: string;
-  lastName?: string;
-  phoneNumber?: string;
-  address?: string;
-  date?: string;
-  type?: CheckType;
-};
+type UpdateCheckup = Partial<Omit<CreateCheckup, "patientId">>;
 
 export { CreateCheckup, UpdateCheckup };

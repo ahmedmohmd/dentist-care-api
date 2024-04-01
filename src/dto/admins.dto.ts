@@ -1,12 +1,12 @@
-import Role from "./role.types";
+import Role from "../types/role.types";
 
-type UpdateAdmin = {
+interface UpdateAdmin {
   firstName?: string;
   lastName?: string;
   email?: string;
   password?: string;
   phoneNumber?: string;
   role: Role;
-};
+}
 
 export { UpdateAdmin };

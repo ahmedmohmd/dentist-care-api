@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
+import { CreateModerator, UpdateModerator } from "../dto/moderators.dto";
 import moderatorsService from "../services/moderators.service";
-import { CreateModerator, UpdateModerator } from "../types/moderators.types";
 import customResponseUtil from "../utils/custom-response.util";
 import HttpCode from "../utils/http-status-code.util";
 import moderatorsValidator from "../validators/moderators.validator";
@@ -23,25 +23,9 @@ const getSingleModerator: RequestHandler<{ moderatorId: string }> = async (
   try {
     const moderatorId = +req.params.moderatorId;
 
-    if (!moderatorId) {
-      return customResponseUtil.errorResponse(
-        res,
-        HttpCode.BAD_REQUEST,
-        "Invalid Moderator ID parameter"
-      );
-    }
-
     const targetModerator = await moderatorsService.getSingleModerator(
       moderatorId
     );
-
-    if (!targetModerator) {
-      return customResponseUtil.errorResponse(
-        res,
-        HttpCode.NOT_FOUND,
-        "Moderator not found!"
-      );
-    }
 
     return customResponseUtil.successResponse(
       res,

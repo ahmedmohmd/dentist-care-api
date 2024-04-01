@@ -26,8 +26,6 @@ const authUser = async (req: Request, res: Response, next: NextFunction) => {
       where: { email: decodedToken.email, id: decodedToken.id },
     });
 
-    console.log(targetUser);
-
     if (!targetUser) {
       return res.status(HttpCode.UNAUTHORIZED).json({
         message: "Access Denied: User not found or not authenticated",

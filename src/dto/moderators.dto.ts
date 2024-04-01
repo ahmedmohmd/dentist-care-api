@@ -20,17 +20,9 @@ type CreateModerator = {
   password: string;
   phoneNumber: string;
   address: string;
-  role: "$Enums.Role";
+  role: $Enums.Role;
 };
 
-type UpdateModerator = {
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  password?: string;
-  phoneNumber?: string;
-  address?: string;
-  role?: $Enums.Role;
-};
+type UpdateModerator = Partial<CreateModerator>;
 
 export { CreateModerator, Moderator, UpdateModerator };

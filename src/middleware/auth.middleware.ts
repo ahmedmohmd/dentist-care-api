@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import prisma from "../../db/db";
+import prisma from "../../db/prisma";
 import HttpCode from "../utils/http-status-code.util";
 import jwtUtil from "../utils/jwt.util";
 

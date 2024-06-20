@@ -4,10 +4,6 @@ enum CheckType {
 }
 
 type CreateCheckup = {
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  address: string;
   date: string;
   type: CheckType;
   patientId: number;

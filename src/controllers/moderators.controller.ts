@@ -1,169 +1,169 @@
 import { RequestHandler } from "express";
+import constantsConfig from "../../config/constants.config";
 import { CreateModerator, UpdateModerator } from "../dto/moderators.dto";
 import moderatorsService from "../services/moderators.service";
+import cacheUtil from "../utils/cache.util";
+import checkCheckupsQueryParams from "../utils/check-checkups-query-params.util";
+import cloudinary from "../utils/cloudinary.util";
 import customResponseUtil from "../utils/custom-response.util";
 import HttpCode from "../utils/http-status-code.util";
-import moderatorsValidator from "../validators/moderators.validator";
 
 const getAllModerators: RequestHandler = async (req, res, next) => {
-  try {
-    const allModerators = await moderatorsService.getAllModerators();
+	try {
+		const { skip, take, sortingOrder } = checkCheckupsQueryParams(req, res);
 
-    return customResponseUtil.successResponse(res, HttpCode.OK, allModerators);
-  } catch (error) {
-    next(error);
-  }
+		const moderatorsFromCache = await cacheUtil.get(
+			`moderators:page=${skip}:limit=${take}:order=${sortingOrder}`
+		);
+
+		if (moderatorsFromCache) {
+			return customResponseUtil.successResponse(
+				res,
+				HttpCode.OK,
+				moderatorsFromCache
+			);
+		}
+
+		const allModerators = await moderatorsService.getAllModerators({
+			skip,
+			take,
+			sortingOrder,
+		});
+
+		await cacheUtil.set(
+			`moderators:page=${skip}:limit=${take}:order=${sortingOrder}`,
+			allModerators
+		);
+
+		return customResponseUtil.successResponse(res, HttpCode.OK, allModerators);
+	} catch (error) {
+		next(error);
+	}
 };
 
 const getSingleModerator: RequestHandler<{ moderatorId: string }> = async (
-  req,
-  res,
-  next
+	req,
+	res,
+	next
 ) => {
-  try {
-    const moderatorId = +req.params.moderatorId;
+	try {
+		const moderatorId = +req.params.moderatorId;
 
-    const targetModerator = await moderatorsService.getSingleModerator(
-      moderatorId
-    );
+		const moderatorFromCache = await cacheUtil.get(
+			`single-moderator:${moderatorId}`
+		);
 
-    return customResponseUtil.successResponse(
-      res,
-      HttpCode.OK,
-      targetModerator
-    );
-  } catch (error) {
-    next(error);
-  }
+		if (moderatorFromCache) {
+			return customResponseUtil.successResponse(
+				res,
+				HttpCode.OK,
+				moderatorFromCache
+			);
+		}
+
+		const targetModerator = await moderatorsService.getSingleModerator(
+			moderatorId
+		);
+
+		await cacheUtil.set(`single-moderator:${moderatorId}`, targetModerator);
+
+		return customResponseUtil.successResponse(
+			res,
+			HttpCode.OK,
+			targetModerator
+		);
+	} catch (error) {
+		next(error);
+	}
 };
 
-const createModerator: RequestHandler = (req, res, next) => {
-  try {
-    const moderatorDataValidationResult: any =
-      moderatorsValidator.CreateModerator.safeParse(
-        req.body as CreateModerator
-      );
+const createModerator: RequestHandler = async (req, res, next) => {
+	try {
+		const { profileImage } = req.file as any;
 
-    // Check Moderator validity
-    for (const key of Object.keys(moderatorDataValidationResult)) {
-      if (!moderatorDataValidationResult[key]) {
-        return customResponseUtil.errorResponse(
-          res,
-          HttpCode.BAD_REQUEST,
-          "Moderator is not Valid, Please try again!"
-        );
-      }
-    }
+		let result;
 
-    return customResponseUtil.successResponse(
-      res,
-      HttpCode.CREATED,
-      "Moderator created successfully"
-    );
-  } catch (error) {
-    next(error);
-  }
+		if (profileImage) {
+			result = await cloudinary.uploader.upload(profileImage);
+		}
+
+		await moderatorsService.createModerator({
+			profileImagePublicId: result?.public_id || null,
+			profileImage: result?.secure_url || constantsConfig.defaultProfileImage,
+			...req.body,
+		});
+
+		return customResponseUtil.successResponse(
+			res,
+			HttpCode.CREATED,
+			"Moderator created successfully"
+		);
+	} catch (error) {
+		next(error);
+	}
 };
 
 const updateModerator: RequestHandler<{ moderatorId: string }> = async (
-  req,
-  res,
-  next
+	req,
+	res,
+	next
 ) => {
-  try {
-    const moderatorId = +req.params.moderatorId;
+	try {
+		const moderatorId = +req.params.moderatorId;
 
-    if (!moderatorId) {
-      return customResponseUtil.errorResponse(
-        res,
-        HttpCode.BAD_REQUEST,
-        "Invalid Moderator ID parameter"
-      );
-    }
+		const { profileImagePublicId } = req.body as UpdateModerator;
+		const { profileImage } = req.file as any;
 
-    const targetModerator = await moderatorsService.getSingleModerator(
-      moderatorId
-    );
+		if (profileImagePublicId) {
+			await cloudinary.uploader.destroy(profileImagePublicId);
+		}
 
-    if (!targetModerator) {
-      return customResponseUtil.errorResponse(
-        res,
-        HttpCode.NOT_FOUND,
-        "Moderator not found"
-      );
-    }
+		let result;
 
-    const moderatorDataValidationResult: any =
-      moderatorsValidator.UpdateModerator.safeParse(req.body);
+		if (profileImage) {
+			result = await cloudinary.uploader.upload(profileImage);
+		}
 
-    // Check Moderator validity
-    for (const key of Object.keys(moderatorDataValidationResult)) {
-      if (!moderatorDataValidationResult[key]) {
-        return customResponseUtil.errorResponse(
-          res,
-          HttpCode.BAD_REQUEST,
-          "Moderator is not Valid, Please try again!"
-        );
-      }
-    }
+		await moderatorsService.updateModerator(moderatorId, {
+			profileImagePublicId: result?.public_id || null,
+			profileImage: result?.secure_url || constantsConfig.defaultProfileImage,
+			...req.body,
+		});
 
-    await moderatorsService.updateModerator(
-      moderatorId,
-      req.body as UpdateModerator
-    );
-
-    return customResponseUtil.successResponse(
-      res,
-      HttpCode.CREATED,
-      "Moderator Updated Successfully"
-    );
-  } catch (error) {
-    next(error);
-  }
+		return customResponseUtil.successResponse(
+			res,
+			HttpCode.CREATED,
+			"Moderator Updated Successfully"
+		);
+	} catch (error) {
+		next(error);
+	}
 };
 
 const deleteModerator: RequestHandler<{ moderatorId: string }> = async (
-  req,
-  res,
-  next
+	req,
+	res,
+	next
 ) => {
-  try {
-    const moderatorId = +req.params.moderatorId;
+	try {
+		const moderatorId = +req.params.moderatorId;
 
-    if (!moderatorId) {
-      return customResponseUtil.errorResponse(
-        res,
-        HttpCode.BAD_REQUEST,
-        "Invalid Moderator ID parameter"
-      );
-    }
+		await moderatorsService.deleteModerator(moderatorId);
 
-    const targetModerator = await moderatorsService.deleteModerator(
-      moderatorId
-    );
-
-    if (!targetModerator) {
-      return customResponseUtil.errorResponse(
-        res,
-        HttpCode.NOT_FOUND,
-        "Moderator not found"
-      );
-    }
-
-    return customResponseUtil.successResponse(
-      res,
-      HttpCode.NO_CONTENT,
-      "Moderator Deleted Successfully"
-    );
-  } catch (error) {
-    next(error);
-  }
+		return customResponseUtil.successResponse(
+			res,
+			HttpCode.NO_CONTENT,
+			"Moderator Deleted Successfully"
+		);
+	} catch (error) {
+		next(error);
+	}
 };
 
 export default {
-  getAllModerators,
-  getSingleModerator,
-  createModerator,
-  updateModerator,
-  deleteModerator,
+	getAllModerators,
+	getSingleModerator,
+	createModerator,
+	updateModerator,
+	deleteModerator,
 };

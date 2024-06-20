@@ -3,6 +3,13 @@ import constantsConfig from "../../config/constants.config";
 import customResponseUtil from "./custom-response.util";
 import HttpCode from "./http-status-code.util";
 
+/**
+ * Validates and parses the query parameters for checking checkups.
+ *
+ * @param {Request} req - the request object
+ * @param {Response} res - the response object
+ * @return {any} an object containing skip, take, and sortingOrder properties
+ */
 const checkCheckupsQueryParams = (req: Request, res: Response): any => {
   const {
     page = "1",

@@ -5,58 +5,58 @@ import HttpCode from "../utils/http-status-code.util";
 import adminsValidator from "../validators/admins.validator";
 
 const validateAdminIdParam: RequestHandler = (req, res, next) => {
-  const adminId = +req.params.adminId;
+	const adminId = +req.params.adminId;
 
-  if (!adminId) {
-    return customResponseUtil.errorResponse(
-      res,
-      HttpCode.BAD_REQUEST,
-      "Invalid Admin ID parameter"
-    );
-  }
+	if (!adminId) {
+		return customResponseUtil.errorResponse(
+			res,
+			HttpCode.BAD_REQUEST,
+			"Invalid Admin ID parameter"
+		);
+	}
 
-  next();
+	next();
 };
 
 const validateAdminExistance: RequestHandler = async (req, res, next) => {
-  try {
-    const adminId = +req.params.adminId;
+	try {
+		const adminId = +req.params.adminId;
 
-    const targetAdmin = await adminsService.getSingleAdmin(adminId);
+		const targetAdmin = await adminsService.getSingleAdmin(adminId);
 
-    if (!targetAdmin) {
-      return customResponseUtil.errorResponse(
-        res,
-        HttpCode.NOT_FOUND,
-        "Admin not found"
-      );
-    }
+		if (!targetAdmin) {
+			return customResponseUtil.errorResponse(
+				res,
+				HttpCode.NOT_FOUND,
+				"Admin not found"
+			);
+		}
 
-    next();
-  } catch (error) {
-    next(error);
-  }
+		next();
+	} catch (error) {
+		next(error);
+	}
 };
 
 const validateUpdateAdmin: RequestHandler = (req, res, next) => {
-  const validatorResult: any = adminsValidator.UpdateAdmin.safeParse(req.body);
+	const validatorResult: any = adminsValidator.UpdateAdmin.safeParse(req.body);
 
-  if (!validatorResult.success) {
-    const errorMessage = validatorResult.error.errors
-      .map((error: any) => error.message)
-      .join("; ");
-    return customResponseUtil.errorResponse(
-      res,
-      HttpCode.BAD_REQUEST,
-      `Admin is not valid: [${errorMessage}]`
-    );
-  }
+	if (!validatorResult.success) {
+		const errorMessage = validatorResult.error.errors
+			.map((error: any) => error.message)
+			.join("; ");
+		return customResponseUtil.errorResponse(
+			res,
+			HttpCode.BAD_REQUEST,
+			`Admin is not valid: [${errorMessage}]`
+		);
+	}
 
-  next();
+	next();
 };
 
 export default {
-  validateAdminExistance,
-  validateAdminIdParam,
-  validateUpdateAdmin,
+	validateAdminExistance,
+	validateAdminIdParam,
+	validateUpdateAdmin,
 };

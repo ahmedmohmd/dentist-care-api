@@ -13,7 +13,7 @@ const checkRole: any = (requiredRoles: Role[]) => {
     } else {
       return customResponseUtil.errorResponse(
         res,
-        HttpCode.UNAUTHORIZED,
+        HttpCode.FORBIDDEN,
 
         "Forbidden - You do not have permission to perform this action"
       );

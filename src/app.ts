@@ -1,8 +1,11 @@
 import "dotenv/config";
 import express from "express";
-import prisma from "../db/db";
+import swaggerJsdoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
+import prisma from "../db/prisma";
 
 import constantsConfig from "../config/constants.config";
+import redis from "../db/redis";
 import globalErrorHandler from "./controllers/global-error-handler.controller";
 import adminsRouter from "./routes/admins.route";
 import authRouter from "./routes/auth.route";
@@ -16,6 +19,13 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Handle swagger docs
+const specs = swaggerJsdoc(constantsConfig.swaggerConfigOptions);
+
+app.use("/api/api-docs", swaggerUi.serve);
+app.get("/api/api-docs", swaggerUi.setup(specs));
+
+// Routes
 app.use("/api/admins", adminsRouter);
 app.use("/api/moderators", moderatorsRouter);
 app.use("/api/patients", patientsRouter);
@@ -27,18 +37,18 @@ app.use(globalErrorHandler);
 
 const PORT = Number(process.env.PORT || constantsConfig.port);
 
-async function main() {
-  app.listen(PORT, () => {
-    console.log(`listening on port ${PORT}...`);
-  });
+async function bootstrap() {
+	app.listen(PORT, () => {
+		console.log(`listening on port ${PORT}...`);
+	});
 }
 
-main()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (e) => {
-    console.error(e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });
+bootstrap()
+	.then(async () => {
+		await prisma.$disconnect();
+	})
+	.catch(async (e) => {
+		console.error(e);
+		await prisma.$disconnect();
+		process.exit(1);
+	});

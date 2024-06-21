@@ -1,12 +1,13 @@
+import cors from 'cors'
 import 'dotenv/config'
 import express from 'express'
 import 'express-async-errors'
+import { rateLimit } from 'express-rate-limit'
 import swaggerJsdoc from 'swagger-jsdoc'
 import swaggerUi from 'swagger-ui-express'
 import prisma from '../db/prisma'
 
 import constantsConfig from '../config/constants.config'
-import redis from '../db/redis'
 import globalErrorHandler from './controllers/global-error-handler.controller'
 import adminsRouter from './routes/admins.route'
 import authRouter from './routes/auth.route'
@@ -19,6 +20,22 @@ const app = express()
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
+
+app.use(
+  cors({
+    origin: '*'
+  })
+)
+
+const limiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  limit: 100, // Limit each IP to 100 requests per windowMs
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false // Disable the `X-RateLimit-*` headers.
+  // store: ... , // Redis, Memcached, etc. See below.
+})
+
+app.use(limiter)
 
 // Handle swagger docs
 const specs = swaggerJsdoc(constantsConfig.swaggerConfigOptions)

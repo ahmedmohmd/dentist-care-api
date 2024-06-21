@@ -2,11 +2,8 @@ import createHttpError from 'http-errors'
 import prisma from '../../db/prisma'
 import { SignUp } from '../dto/auth.dto'
 import { SignInData } from '../types/auth.types'
-import Role from '../types/role.types'
 import hashPasswordUtil from '../utils/hash-password.util'
-import HttpCode from '../utils/http-status-code.util'
 import jwtUtil from '../utils/jwt.util'
-import { RequestError } from '../utils/request-error.util'
 
 /**
  * Sign in a user with the provided email, password, and role.
@@ -21,7 +18,7 @@ const signIn = async ({ email, password, role }: SignInData) => {
     throw new createHttpError.BadRequest('Email or Password is not Valid')
   }
 
-  let targetUser = await prisma.user.findUnique({
+  const targetUser = await prisma.user.findUnique({
     where: {
       email: email,
       role: role

@@ -1,10 +1,10 @@
 import { RequestHandler } from 'express'
-import constantsConfig from '../../config/constants.config'
+import createHttpError from 'http-errors'
 import { UpdatePatient } from '../dto/patients.dto'
+import { updateImage } from '../services/image.service'
 import patientsService from '../services/patients.service'
 import cacheUtil from '../utils/cache.util'
 import checkCheckupsQueryParams from '../utils/check-checkups-query-params.util'
-import cloudinary from '../utils/cloudinary.util'
 import customResponseUtil from '../utils/custom-response.util'
 import HttpCode from '../utils/http-status-code.util'
 
@@ -55,22 +55,19 @@ const getSinglePatient: RequestHandler<{ patientId: string }> = async (req, res,
 const updatePatient: RequestHandler<{ patientId: string }> = async (req, res, next) => {
   try {
     const patientId = +req.params.patientId
-    const { profileImagePublicId } = req.body as UpdatePatient
-    const { profileImage } = req.file as any
+    const profileImage: Express.Multer.File | undefined = req.file
 
-    if (profileImagePublicId) {
-      await cloudinary.uploader.destroy(profileImagePublicId)
+    const targetPatient = await patientsService.getSinglePatient(patientId)
+
+    if (!profileImage) {
+      throw new createHttpError.BadRequest('Image is not correct!')
     }
 
-    let result: any
-
-    if (profileImage) {
-      result = await cloudinary.uploader.upload(profileImage)
-    }
+    const { newImageId, newImageUrl } = await updateImage(targetPatient?.profileImagePublicId, profileImage)
 
     const patientData = Object.assign({}, req.body, {
-      profileImagePublicId: result.public_id || null,
-      profileImage: result.secure_url || constantsConfig.defaultProfileImage
+      profileImagePublicId: newImageId,
+      profileImage: newImageUrl
     })
 
     await patientsService.updatePatient(patientId, patientData)

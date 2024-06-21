@@ -1,4 +1,3 @@
-import constantsConfig from '../../config/constants.config'
 import enumsConfig from '../../config/enums.config'
 import prisma from '../../db/prisma'
 import { CreatePatient, UpdatePatient } from '../dto/patients.dto'

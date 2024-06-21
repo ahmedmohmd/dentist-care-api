@@ -1,3 +1,3 @@
-type Role = "ADMIN" | "MODERATOR" | "PATIENT";
+type Role = 'ADMIN' | 'MODERATOR' | 'PATIENT'
 
-export default Role;
+export default Role

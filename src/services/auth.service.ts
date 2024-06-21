@@ -1,53 +1,47 @@
-import prisma from "../../db/prisma";
-import Role from "../types/role.types";
-import hashPasswordUtil from "../utils/hash-password.util";
-import HttpCode from "../utils/http-status-code.util";
-import jwtUtil from "../utils/jwt.util";
-import { RequestError } from "../utils/request-error.util";
+import createHttpError from 'http-errors'
+import prisma from '../../db/prisma'
+import { SignUp } from '../dto/auth.dto'
+import { SignInData } from '../types/auth.types'
+import Role from '../types/role.types'
+import hashPasswordUtil from '../utils/hash-password.util'
+import HttpCode from '../utils/http-status-code.util'
+import jwtUtil from '../utils/jwt.util'
+import { RequestError } from '../utils/request-error.util'
 
 /**
- * Authenticates a user by their email and password, generating a JWT token upon successful authentication.
+ * Sign in a user with the provided email, password, and role.
  *
- * @param {string} email - the user's email address
- * @param {string} password - the user's password
- * @param {Role} role - the user's role
- * @return {Promise<string>} a JWT token for the authenticated user
+ * @param {SignInData} email - The email of the user signing in.
+ * @param {SignInData} password - The password of the user signing in.
+ * @param {SignInData} role - The role of the user signing in.
+ * @return {Promise<string>} A token representing the user's authentication.
  */
-const signIn = async (email: string, password: string, role: Role) => {
+const signIn = async ({ email, password, role }: SignInData) => {
   if (!email || !password) {
-    throw new RequestError("Invalid email or password!", HttpCode.BAD_REQUEST);
+    throw new createHttpError.BadRequest('Email or Password is not Valid')
   }
 
   let targetUser = await prisma.user.findUnique({
     where: {
       email: email,
-      role: role,
-    },
-  });
+      role: role
+    }
+  })
 
   if (!targetUser) {
-    throw new RequestError(
-      `${role.toLowerCase()} not found!`,
-      HttpCode.NOT_FOUND
-    );
+    throw new createHttpError.NotFound(`${role.toLowerCase()} not found!`)
   }
 
-  const passwordValidationResult = await hashPasswordUtil.check(
-    password,
-    targetUser.password
-  );
+  const passwordValidationResult = await hashPasswordUtil.check(password, targetUser.password)
 
   if (!passwordValidationResult) {
-    throw new RequestError(
-      `Sorry, ${role.toLowerCase()} Password is Incorrect`,
-      HttpCode.NOT_FOUND
-    );
+    throw new createHttpError.BadRequest(`Sorry, ${role.toLowerCase()} Password is Incorrect`)
   }
 
-  const token = await jwtUtil.generateWebToken(targetUser);
+  const token = await jwtUtil.generateWebToken(targetUser)
 
-  return token;
-};
+  return token
+}
 
 /**
  * Creates a new user account by signing up with the provided patient data.
@@ -55,10 +49,20 @@ const signIn = async (email: string, password: string, role: Role) => {
  * @param {any} patientData - The data of the patient for creating the account.
  * @return {any} The newly created user data.
  */
-const signUp = (patientData: any) => {
+const signUp = async (patientData: SignUp) => {
   return prisma.user.create({
-    data: patientData,
-  });
-};
+    data: {
+      address: patientData.address,
+      firstName: patientData.firstName,
+      lastName: patientData.lastName,
+      email: patientData.email,
+      password: await hashPasswordUtil.encrypt(patientData.password),
+      phoneNumber: patientData.phoneNumber,
+      role: patientData.role,
+      profileImagePublicId: patientData.profileImagePublicId,
+      profileImage: patientData.profileImage
+    }
+  })
+}
 
-export default { signIn, signUp };
+export default { signIn, signUp }

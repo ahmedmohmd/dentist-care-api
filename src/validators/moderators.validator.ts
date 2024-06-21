@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod'
 
 const CreateModerator = z.object({
   firstName: z.string(),
@@ -7,15 +7,15 @@ const CreateModerator = z.object({
   password: z
     .string()
     .min(8, {
-      message: "Your password should be at least 8 characters",
+      message: 'Your password should be at least 8 characters'
     })
     .max(24, {
-      message: "Your password should be at most 24 characters",
+      message: 'Your password should be at most 24 characters'
     }),
   phoneNumber: z.string(),
   address: z.string().optional(),
-  role: z.enum(["MODERATOR"]),
-});
+  role: z.enum(['MODERATOR'])
+})
 
 const UpdateModerator = z.object({
   firstName: z.string().optional(),
@@ -24,14 +24,14 @@ const UpdateModerator = z.object({
   password: z
     .string()
     .min(8, {
-      message: "Your password should be at least 8 characters",
+      message: 'Your password should be at least 8 characters'
     })
     .max(24, {
-      message: "Your password should be at most 24 characters",
+      message: 'Your password should be at most 24 characters'
     })
     .optional(),
   phoneNumber: z.string().optional(),
-  address: z.string().optional(),
-});
+  address: z.string().optional()
+})
 
-export default { CreateModerator, UpdateModerator };
+export default { CreateModerator, UpdateModerator }

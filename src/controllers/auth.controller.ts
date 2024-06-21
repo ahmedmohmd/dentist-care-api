@@ -1,106 +1,86 @@
-import { RequestHandler } from "express";
-import constantsConfig from "../../config/constants.config";
-import { SignIn } from "../dto/auth.dto";
-import { CreatePatient } from "../dto/patients.dto";
-import authService from "../services/auth.service";
-import patientsService from "../services/patients.service";
-import cloudinary from "../utils/cloudinary.util";
-import customResponseUtil from "../utils/custom-response.util";
-import HttpCode from "../utils/http-status-code.util";
-import handleUpload from "../utils/upload-file.util";
-import authValidator from "../validators/auth.validator";
-import patientsValidator from "../validators/patients.validator";
+import { RequestHandler } from 'express'
+import createHttpError from 'http-errors'
+import constantsConfig from '../../config/constants.config'
+import { CreatePatient } from '../dto/patients.dto'
+import authService from '../services/auth.service'
+import patientsService from '../services/patients.service'
+import { SignInData } from '../types/auth.types'
+import customResponseUtil from '../utils/custom-response.util'
+import HttpCode from '../utils/http-status-code.util'
+import jwtUtil from '../utils/jwt.util'
+import handleUpload from '../utils/upload-file.util'
+import authValidator from '../validators/auth.validator'
+import patientsValidator from '../validators/patients.validator'
 
 const signIn: RequestHandler = async (req, res, next) => {
-	try {
-		const signInDataValidationResult: any = authValidator.SignIn.safeParse(
-			req.body
-		);
+  const { email, password, role } = req.body
 
-		for (const key of Object.keys(signInDataValidationResult)) {
-			if (!signInDataValidationResult[key]) {
-				return customResponseUtil.errorResponse(
-					res,
-					HttpCode.BAD_REQUEST,
-					"Email or Password is not Valid, Please try again!"
-				);
-			}
-		}
+  const signInDataValidationResult: any = authValidator.SignIn.safeParse(req.body)
 
-		const token = await authService.signIn(
-			(req.body as SignIn).email,
-			(req.body as SignIn).password,
-			(req.body as SignIn).role
-		);
+  if (!signInDataValidationResult.success) {
+    throw new createHttpError.BadRequest(`Email or Password is not Valid`)
+  }
 
-		if (!token) {
-			return customResponseUtil.errorResponse(
-				res,
-				HttpCode.BAD_REQUEST,
-				"Invalid Email or Password."
-			);
-		}
+  const signInData: SignInData = {
+    email,
+    password,
+    role
+  }
 
-		return customResponseUtil.successResponse(res, HttpCode.OK, {
-			token,
-		});
-	} catch (error) {
-		next(error);
-	}
-};
+  const token = await authService.signIn(signInData)
+
+  if (!token) {
+    throw new createHttpError.Unauthorized('invalid credentials')
+  }
+
+  return customResponseUtil.successResponse(res, HttpCode.OK, {
+    token
+  })
+}
 
 const signUp: RequestHandler = async (req, res, next) => {
-	try {
-		// const { profileImage = "" } = req.file as any;
-		const profileImage: any = req.file || "";
+  const profileImage: Express.Multer.File | undefined = req.file
 
-		const patientDataValidationResult: any =
-			patientsValidator.CreatePatient.safeParse(req.body as CreatePatient);
+  const patientDataValidationResult: any = patientsValidator.CreatePatient.safeParse(req.body as CreatePatient)
 
-		if (!patientDataValidationResult.success) {
-			const errorMessage = patientDataValidationResult.error.errors
-				.map((error: any) => error.message)
-				.join("; ");
-			return customResponseUtil.errorResponse(
-				res,
-				HttpCode.BAD_REQUEST,
-				`Patient is not valid: [${errorMessage}]`
-			);
-		}
+  if (!patientDataValidationResult.success) {
+    throw new createHttpError.BadRequest('your data is not valid')
+  }
 
-		const targetPatient = await patientsService.getPatientByEmail(
-			req.body.email
-		);
+  const targetPatient = await patientsService.getPatientByEmail(req.body.email)
 
-		if (targetPatient) {
-			return customResponseUtil.errorResponse(
-				res,
-				HttpCode.BAD_REQUEST,
-				"Patient is already Exists!"
-			);
-		}
+  if (targetPatient) {
+    throw new createHttpError.BadRequest('Patient is already Exists!')
+  }
 
-		let result: any;
+  let result: any
 
-		if (profileImage) {
-			result = await handleUpload(profileImage);
-		}
+  if (profileImage) {
+    result = await handleUpload(profileImage)
+  }
 
-		const patientData = Object.assign({}, req.body, {
-			profileImagePublicId: result?.public_id || null,
-			profileImage: result?.secure_url || constantsConfig.defaultProfileImage,
-		});
+  const patientData = Object.assign({}, req.body, {
+    profileImagePublicId: result?.public_id || null,
+    profileImage: result?.secure_url || constantsConfig.defaultProfileImage
+  })
 
-		await patientsService.createPatient(patientData);
+  const createdUser = await authService.signUp(patientData)
 
-		return customResponseUtil.successResponse(
-			res,
-			HttpCode.CREATED,
-			"Patient created successfully"
-		);
-	} catch (error) {
-		next(error);
-	}
-};
+  const token = await jwtUtil.generateWebToken({
+    id: createdUser.id,
+    firstName: createdUser.firstName,
+    lastName: createdUser.lastName,
+    email: createdUser.email,
+    profileImage: createdUser.profileImage,
+    phoneNumber: createdUser.phoneNumber,
+    address: createdUser.address,
+    role: createdUser.role
+  })
 
-export default { signIn, signUp };
+  return res.json({
+    user: createdUser,
+    token
+  })
+}
+
+export default { signIn, signUp }

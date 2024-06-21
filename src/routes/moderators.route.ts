@@ -1,12 +1,12 @@
-import express from "express";
-import enumsConfig from "../../config/enums.config";
-import moderatorsController from "../controllers/moderators.controller";
-import authMiddleware from "../middleware/auth.middleware";
-import checkRoleMiddleware from "../middleware/check-role.middleware";
-import moderatorsMiddleware from "../middleware/moderators.middleware";
-import uploadMiddleware from "../middleware/upload.middleware";
+import express from 'express'
+import enumsConfig from '../../config/enums.config'
+import moderatorsController from '../controllers/moderators.controller'
+import authMiddleware from '../middleware/auth.middleware'
+import checkRoleMiddleware from '../middleware/check-role.middleware'
+import moderatorsMiddleware from '../middleware/moderators.middleware'
+import uploadMiddleware from '../middleware/upload.middleware'
 
-const router = express.Router();
+const router = express.Router()
 
 /**
  * @swagger
@@ -232,14 +232,11 @@ const router = express.Router();
  *                   example: false
  */
 router.get(
-	"/",
-	authMiddleware.authUser,
-	checkRoleMiddleware.checkRole([
-		enumsConfig.UserRole.ADMIN,
-		enumsConfig.UserRole.MODERATOR,
-	]),
-	moderatorsController.getAllModerators
-);
+  '/',
+  authMiddleware.authUser,
+  checkRoleMiddleware.checkRole([enumsConfig.UserRole.ADMIN, enumsConfig.UserRole.MODERATOR]),
+  moderatorsController.getAllModerators
+)
 
 /**
  * @swagger
@@ -340,16 +337,13 @@ router.get(
  *                   example: false
  */
 router.get(
-	"/:moderatorId",
-	authMiddleware.authUser,
-	checkRoleMiddleware.checkRole([
-		enumsConfig.UserRole.ADMIN,
-		enumsConfig.UserRole.MODERATOR,
-	]),
-	moderatorsMiddleware.validateModeratorIdParam,
-	moderatorsMiddleware.validateModeratorExistance,
-	moderatorsController.getSingleModerator
-);
+  '/:moderatorId',
+  authMiddleware.authUser,
+  checkRoleMiddleware.checkRole([enumsConfig.UserRole.ADMIN, enumsConfig.UserRole.MODERATOR]),
+  moderatorsMiddleware.validateModeratorIdParam,
+  moderatorsMiddleware.validateModeratorExistance,
+  moderatorsController.getSingleModerator
+)
 
 /**
  * @swagger
@@ -432,16 +426,13 @@ router.get(
  *                   example: false
  */
 router.post(
-	"/",
-	authMiddleware.authUser,
-	checkRoleMiddleware.checkRole([
-		enumsConfig.UserRole.ADMIN,
-		enumsConfig.UserRole.MODERATOR,
-	]),
-	moderatorsMiddleware.validateCreateModerator,
-	uploadMiddleware.single("profileImage"),
-	moderatorsController.createModerator
-);
+  '/',
+  authMiddleware.authUser,
+  checkRoleMiddleware.checkRole([enumsConfig.UserRole.ADMIN, enumsConfig.UserRole.MODERATOR]),
+  moderatorsMiddleware.validateCreateModerator,
+  uploadMiddleware.single('profileImage'),
+  moderatorsController.createModerator
+)
 
 /**
  * @swagger
@@ -544,18 +535,15 @@ router.post(
  *                   example: false
  */
 router.patch(
-	"/:moderatorId",
-	authMiddleware.authUser,
-	checkRoleMiddleware.checkRole([
-		enumsConfig.UserRole.ADMIN,
-		enumsConfig.UserRole.MODERATOR,
-	]),
-	moderatorsMiddleware.validateModeratorIdParam,
-	moderatorsMiddleware.validateModeratorExistance,
-	moderatorsMiddleware.validateUpdateModerator,
-	uploadMiddleware.single("profileImage"),
-	moderatorsController.updateModerator
-);
+  '/:moderatorId',
+  authMiddleware.authUser,
+  checkRoleMiddleware.checkRole([enumsConfig.UserRole.ADMIN, enumsConfig.UserRole.MODERATOR]),
+  moderatorsMiddleware.validateModeratorIdParam,
+  moderatorsMiddleware.validateModeratorExistance,
+  moderatorsMiddleware.validateUpdateModerator,
+  uploadMiddleware.single('profileImage'),
+  moderatorsController.updateModerator
+)
 
 /**
  * @swagger
@@ -639,15 +627,12 @@ router.patch(
  *                   example: false
  */
 router.delete(
-	"/:moderatorId",
-	authMiddleware.authUser,
-	checkRoleMiddleware.checkRole([
-		enumsConfig.UserRole.ADMIN,
-		enumsConfig.UserRole.MODERATOR,
-	]),
-	moderatorsMiddleware.validateModeratorIdParam,
-	moderatorsMiddleware.validateModeratorExistance,
-	moderatorsController.deleteModerator
-);
+  '/:moderatorId',
+  authMiddleware.authUser,
+  checkRoleMiddleware.checkRole([enumsConfig.UserRole.ADMIN, enumsConfig.UserRole.MODERATOR]),
+  moderatorsMiddleware.validateModeratorIdParam,
+  moderatorsMiddleware.validateModeratorExistance,
+  moderatorsController.deleteModerator
+)
 
-export default router;
+export default router

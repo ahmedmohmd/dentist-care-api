@@ -1,37 +1,29 @@
-import constantsConfig from "../../config/constants.config";
-import enumsConfig from "../../config/enums.config";
-import prisma from "../../db/prisma";
-import { CreatePatient, UpdatePatient } from "../dto/patients.dto";
-import cloudinary from "../utils/cloudinary.util";
-import hashPasswordUtil from "../utils/hash-password.util";
+import constantsConfig from '../../config/constants.config'
+import enumsConfig from '../../config/enums.config'
+import prisma from '../../db/prisma'
+import { CreatePatient, UpdatePatient } from '../dto/patients.dto'
+import cloudinary from '../utils/cloudinary.util'
+import hashPasswordUtil from '../utils/hash-password.util'
 
 /**
  * Retrieves all patients from the database.
  *
  * @return {Promise<User[]>} An array of user objects representing patients.
  */
-const getAllPatients = ({
-	skip,
-	take,
-	sortingOrder,
-}: {
-	skip: number;
-	take: number;
-	sortingOrder: "desc" | "asc";
-}) => {
-	return prisma.user.findMany({
-		where: {
-			role: enumsConfig.UserRole.PATIENT,
-		},
+const getAllPatients = ({ skip, take, sortingOrder }: { skip: number; take: number; sortingOrder: 'desc' | 'asc' }) => {
+  return prisma.user.findMany({
+    where: {
+      role: enumsConfig.UserRole.PATIENT
+    },
 
-		skip: skip,
-		take: take,
+    skip: skip,
+    take: take,
 
-		orderBy: {
-			createdAt: sortingOrder,
-		},
-	});
-};
+    orderBy: {
+      createdAt: sortingOrder
+    }
+  })
+}
 
 /**
  * A function that retrieves a single patient based on the provided patientId.
@@ -40,13 +32,13 @@ const getAllPatients = ({
  * @return {Promise<User>} A promise that resolves to the user object representing the patient.
  */
 const getSinglePatient = (patientId: number) => {
-	return prisma.user.findUnique({
-		where: {
-			id: patientId,
-			role: enumsConfig.UserRole.PATIENT,
-		},
-	});
-};
+  return prisma.user.findUnique({
+    where: {
+      id: patientId,
+      role: enumsConfig.UserRole.PATIENT
+    }
+  })
+}
 
 /**
  * Retrieve a patient by their email.
@@ -55,13 +47,13 @@ const getSinglePatient = (patientId: number) => {
  * @return {Promise<User>} The unique user object representing the patient.
  */
 const getPatientByEmail = (patientEmail: string) => {
-	return prisma.user.findUnique({
-		where: {
-			role: enumsConfig.UserRole.PATIENT,
-			email: patientEmail,
-		},
-	});
-};
+  return prisma.user.findUnique({
+    where: {
+      role: enumsConfig.UserRole.PATIENT,
+      email: patientEmail
+    }
+  })
+}
 
 /**
  * Creates a new patient using the provided patient data.
@@ -70,20 +62,20 @@ const getPatientByEmail = (patientEmail: string) => {
  * @return {Promise<User>} A Promise that resolves to the newly created user.
  */
 const createPatient = async (patientData: CreatePatient) => {
-	return prisma.user.create({
-		data: {
-			address: patientData.address,
-			firstName: patientData.firstName,
-			lastName: patientData.lastName,
-			email: patientData.email,
-			password: await hashPasswordUtil.encrypt(patientData.password),
-			phoneNumber: patientData.phoneNumber,
-			role: patientData.role,
-			profileImagePublicId: patientData.profileImagePublicId,
-			profileImage: patientData.profileImage,
-		},
-	});
-};
+  return prisma.user.create({
+    data: {
+      address: patientData.address,
+      firstName: patientData.firstName,
+      lastName: patientData.lastName,
+      email: patientData.email,
+      password: await hashPasswordUtil.encrypt(patientData.password),
+      phoneNumber: patientData.phoneNumber,
+      role: patientData.role,
+      profileImagePublicId: patientData.profileImagePublicId,
+      profileImage: patientData.profileImage
+    }
+  })
+}
 
 /**
  * Updates a patient's information in the database.
@@ -93,15 +85,15 @@ const createPatient = async (patientData: CreatePatient) => {
  * @return {Promise<User>} The updated user object
  */
 const updatePatient = (patientId: number, patientData: UpdatePatient) => {
-	return prisma.user.update({
-		where: {
-			id: patientId,
-			role: enumsConfig.UserRole.PATIENT,
-		},
+  return prisma.user.update({
+    where: {
+      id: patientId,
+      role: enumsConfig.UserRole.PATIENT
+    },
 
-		data: patientData,
-	});
-};
+    data: patientData
+  })
+}
 
 /**
  * Deletes a patient with the specified ID.
@@ -110,25 +102,25 @@ const updatePatient = (patientId: number, patientData: UpdatePatient) => {
  * @return {Promise<any>} A promise that resolves to the deleted patient
  */
 const deletePatient = async (patientId: number) => {
-	const targetPatient = await getSinglePatient(patientId);
+  const targetPatient = await getSinglePatient(patientId)
 
-	if (targetPatient?.profileImagePublicId) {
-		await cloudinary.uploader.destroy(targetPatient.profileImagePublicId);
-	}
+  if (targetPatient?.profileImagePublicId) {
+    await cloudinary.uploader.destroy(targetPatient.profileImagePublicId)
+  }
 
-	return prisma.user.delete({
-		where: {
-			id: patientId,
-			role: enumsConfig.UserRole.PATIENT,
-		},
-	});
-};
+  return prisma.user.delete({
+    where: {
+      id: patientId,
+      role: enumsConfig.UserRole.PATIENT
+    }
+  })
+}
 
 export default {
-	getSinglePatient,
-	updatePatient,
-	deletePatient,
-	getAllPatients,
-	createPatient,
-	getPatientByEmail,
-};
+  getSinglePatient,
+  updatePatient,
+  deletePatient,
+  getAllPatients,
+  createPatient,
+  getPatientByEmail
+}

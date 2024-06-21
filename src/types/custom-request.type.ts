@@ -1,5 +1,5 @@
 interface CustomRequest extends Request {
-  user?: any;
+  user?: any
 }
 
-export { CustomRequest };
+export { CustomRequest }

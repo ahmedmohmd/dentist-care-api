@@ -1,8 +1,11 @@
 class RequestError extends Error {
-  constructor(public message: string, public statusCode?: number) {
-    super(message);
-    this.statusCode = statusCode;
+  constructor(
+    public message: string,
+    public statusCode?: number
+  ) {
+    super(message)
+    this.statusCode = statusCode
   }
 }
 
-export { RequestError };
+export { RequestError }

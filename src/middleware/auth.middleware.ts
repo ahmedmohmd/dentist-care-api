@@ -1,45 +1,43 @@
-import { NextFunction, Request, Response } from "express";
-import prisma from "../../db/prisma";
-import HttpCode from "../utils/http-status-code.util";
-import jwtUtil from "../utils/jwt.util";
+import { NextFunction, Request, Response } from 'express'
+import prisma from '../../db/prisma'
+import HttpCode from '../utils/http-status-code.util'
+import jwtUtil from '../utils/jwt.util'
 
 const authUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const authHeader = req.headers.authorization;
+    const authHeader = req.headers.authorization
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(HttpCode.UNAUTHORIZED).json({
-        message: "Access Denied: Missing or invalid authorization header",
-      });
+        message: 'Access Denied: Missing or invalid authorization header'
+      })
     }
 
-    const token = authHeader.split(" ")[1];
-    const decodedToken = await jwtUtil.verifyWebToken(token);
+    const token = authHeader.split(' ')[1]
+    const decodedToken = await jwtUtil.verifyWebToken(token)
 
-    if (!decodedToken || typeof decodedToken === "string") {
-      return res
-        .status(HttpCode.UNAUTHORIZED)
-        .json({ message: "Access Denied: Invalid token provided" });
+    if (!decodedToken || typeof decodedToken === 'string') {
+      return res.status(HttpCode.UNAUTHORIZED).json({ message: 'Access Denied: Invalid token provided' })
     }
 
-    let targetUser = await prisma.user.findUnique({
-      where: { email: decodedToken.email, id: decodedToken.id },
-    });
+    const targetUser = await prisma.user.findUnique({
+      where: { email: decodedToken.email, id: decodedToken.id }
+    })
 
     if (!targetUser) {
       return res.status(HttpCode.UNAUTHORIZED).json({
-        message: "Access Denied: User not found or not authenticated",
-      });
+        message: 'Access Denied: User not found or not authenticated'
+      })
     }
 
-    Object.defineProperty(req, "user", {
-      value: decodedToken,
-    });
+    Object.defineProperty(req, 'user', {
+      value: decodedToken
+    })
 
-    next();
+    next()
   } catch (error) {
-    next(error);
+    next(error)
   }
-};
+}
 
-export default { authUser };
+export default { authUser }

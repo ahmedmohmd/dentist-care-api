@@ -1,10 +1,10 @@
-import { beforeEach } from "vitest";
-import { mockDeep, mockReset } from "vitest-mock-extended";
+import { beforeEach } from 'vitest'
+import { mockDeep, mockReset } from 'vitest-mock-extended'
 
 beforeEach(() => {
-  mockReset(bcrypt);
-});
+  mockReset(bcrypt)
+})
 
-const bcrypt = mockDeep<typeof import("bcrypt")>();
+const bcrypt = mockDeep<typeof import('bcrypt')>()
 
-export default bcrypt;
+export default bcrypt

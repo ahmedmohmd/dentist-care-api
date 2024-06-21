@@ -1,12 +1,12 @@
 enum UserRole {
-  ADMIN = "ADMIN",
-  MODERATOR = "MODERATOR",
-  PATIENT = "PATIENT",
+  ADMIN = 'ADMIN',
+  MODERATOR = 'MODERATOR',
+  PATIENT = 'PATIENT'
 }
 
 enum CheckupType {
-  EXAMINATION = "EXAMINATION",
-  CONSULTATION = "CONSULTATION",
+  EXAMINATION = 'EXAMINATION',
+  CONSULTATION = 'CONSULTATION'
 }
 
-export default { CheckupType, UserRole };
+export default { CheckupType, UserRole }

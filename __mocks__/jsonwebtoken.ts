@@ -1,10 +1,10 @@
-import { beforeEach } from "vitest";
-import { mockDeep, mockReset } from "vitest-mock-extended";
+import { beforeEach } from 'vitest'
+import { mockDeep, mockReset } from 'vitest-mock-extended'
 
 beforeEach(() => {
-  mockReset(jsonwebtoken);
-});
+  mockReset(jsonwebtoken)
+})
 
-const jsonwebtoken = mockDeep<typeof import("jsonwebtoken")>();
+const jsonwebtoken = mockDeep<typeof import('jsonwebtoken')>()
 
-export default jsonwebtoken;
+export default jsonwebtoken

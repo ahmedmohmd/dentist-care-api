@@ -1,12 +1,12 @@
-import express from "express";
-import enumsConfig from "../../config/enums.config";
-import patientsController from "../controllers/patients.controller";
-import authMiddleware from "../middleware/auth.middleware";
-import checkRoleMiddleware from "../middleware/check-role.middleware";
-import { patientsMiddleware } from "../middleware/patients.middleware";
-import uploadMiddleware from "../middleware/upload.middleware";
+import express from 'express'
+import enumsConfig from '../../config/enums.config'
+import patientsController from '../controllers/patients.controller'
+import authMiddleware from '../middleware/auth.middleware'
+import checkRoleMiddleware from '../middleware/check-role.middleware'
+import { patientsMiddleware } from '../middleware/patients.middleware'
+import uploadMiddleware from '../middleware/upload.middleware'
 
-const router = express.Router();
+const router = express.Router()
 
 /**
  * @swagger
@@ -231,14 +231,11 @@ const router = express.Router();
  *                   example: false
  */
 router.get(
-	"/",
-	authMiddleware.authUser,
-	checkRoleMiddleware.checkRole([
-		enumsConfig.UserRole.ADMIN,
-		enumsConfig.UserRole.MODERATOR,
-	]),
-	patientsController.getAllPatients
-);
+  '/',
+  authMiddleware.authUser,
+  checkRoleMiddleware.checkRole([enumsConfig.UserRole.ADMIN, enumsConfig.UserRole.MODERATOR]),
+  patientsController.getAllPatients
+)
 
 /**
  * @swagger
@@ -339,17 +336,17 @@ router.get(
  *                   example: false
  */
 router.get(
-	"/:patientId",
-	authMiddleware.authUser,
-	checkRoleMiddleware.checkRole([
-		enumsConfig.UserRole.ADMIN,
-		enumsConfig.UserRole.MODERATOR,
-		enumsConfig.UserRole.PATIENT,
-	]),
-	patientsMiddleware.validatePatientIdParam,
-	patientsMiddleware.validatePatientExistance,
-	patientsController.getSinglePatient
-);
+  '/:patientId',
+  authMiddleware.authUser,
+  checkRoleMiddleware.checkRole([
+    enumsConfig.UserRole.ADMIN,
+    enumsConfig.UserRole.MODERATOR,
+    enumsConfig.UserRole.PATIENT
+  ]),
+  patientsMiddleware.validatePatientIdParam,
+  patientsMiddleware.validatePatientExistance,
+  patientsController.getSinglePatient
+)
 
 /**
  * @swagger
@@ -452,15 +449,15 @@ router.get(
  *                   example: false
  */
 router.patch(
-	"/:patientId",
-	authMiddleware.authUser,
-	checkRoleMiddleware.checkRole([enumsConfig.UserRole.PATIENT]),
-	patientsMiddleware.validatePatientIdParam,
-	patientsMiddleware.validatePatientExistance,
-	patientsMiddleware.validateUpdatePatient,
-	uploadMiddleware.single("profileImage"),
-	patientsController.updatePatient
-);
+  '/:patientId',
+  authMiddleware.authUser,
+  checkRoleMiddleware.checkRole([enumsConfig.UserRole.PATIENT]),
+  patientsMiddleware.validatePatientIdParam,
+  patientsMiddleware.validatePatientExistance,
+  patientsMiddleware.validateUpdatePatient,
+  uploadMiddleware.single('profileImage'),
+  patientsController.updatePatient
+)
 
 /**
  * @swagger
@@ -544,16 +541,16 @@ router.patch(
  *                   example: false
  */
 router.delete(
-	"/:patientId",
-	authMiddleware.authUser,
-	checkRoleMiddleware.checkRole([
-		enumsConfig.UserRole.ADMIN,
-		enumsConfig.UserRole.MODERATOR,
-		enumsConfig.UserRole.PATIENT,
-	]),
-	patientsMiddleware.validatePatientIdParam,
-	patientsMiddleware.validatePatientExistance,
-	patientsController.deletePatient
-);
+  '/:patientId',
+  authMiddleware.authUser,
+  checkRoleMiddleware.checkRole([
+    enumsConfig.UserRole.ADMIN,
+    enumsConfig.UserRole.MODERATOR,
+    enumsConfig.UserRole.PATIENT
+  ]),
+  patientsMiddleware.validatePatientIdParam,
+  patientsMiddleware.validatePatientExistance,
+  patientsController.deletePatient
+)
 
-export default router;
+export default router

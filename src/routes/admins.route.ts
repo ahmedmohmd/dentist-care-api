@@ -1,13 +1,13 @@
-import express from "express";
-import enumsConfig from "../../config/enums.config";
-import adminController from "../controllers/admins.controller";
-import adminsMiddleware from "../middleware/admins.middleware";
-import authMiddleware from "../middleware/auth.middleware";
-import checkRoleMiddleware from "../middleware/check-role.middleware";
-import moderatorsMiddleware from "../middleware/moderators.middleware";
-import uploadMiddleware from "../middleware/upload.middleware";
+import express from 'express'
+import enumsConfig from '../../config/enums.config'
+import adminController from '../controllers/admins.controller'
+import adminsMiddleware from '../middleware/admins.middleware'
+import authMiddleware from '../middleware/auth.middleware'
+import checkRoleMiddleware from '../middleware/check-role.middleware'
+import moderatorsMiddleware from '../middleware/moderators.middleware'
+import uploadMiddleware from '../middleware/upload.middleware'
 
-const router = express.Router();
+const router = express.Router()
 
 /**
  * @swagger
@@ -185,13 +185,13 @@ const router = express.Router();
  *                   example: false
  */
 router.get(
-	"/:adminId",
-	authMiddleware.authUser,
-	checkRoleMiddleware.checkRole([enumsConfig.UserRole.ADMIN]),
-	adminsMiddleware.validateAdminIdParam,
-	adminsMiddleware.validateAdminExistance,
-	adminController.getSingleAdmin
-);
+  '/:adminId',
+  authMiddleware.authUser,
+  checkRoleMiddleware.checkRole([enumsConfig.UserRole.ADMIN]),
+  adminsMiddleware.validateAdminIdParam,
+  adminsMiddleware.validateAdminExistance,
+  adminController.getSingleAdmin
+)
 
 /**
  * @swagger
@@ -294,13 +294,13 @@ router.get(
  *                   example: false
  */
 router.post(
-	"/convert-to-admin/:moderatorId",
-	authMiddleware.authUser,
-	checkRoleMiddleware.checkRole([enumsConfig.UserRole.ADMIN]),
-	moderatorsMiddleware.validateModeratorIdParam,
-	moderatorsMiddleware.validateModeratorExistance,
-	adminController.convertToAdmin
-);
+  '/convert-to-admin/:moderatorId',
+  authMiddleware.authUser,
+  checkRoleMiddleware.checkRole([enumsConfig.UserRole.ADMIN]),
+  moderatorsMiddleware.validateModeratorIdParam,
+  moderatorsMiddleware.validateModeratorExistance,
+  adminController.convertToAdmin
+)
 
 /**
  * @swagger
@@ -403,13 +403,13 @@ router.post(
  *                   example: false
  */
 router.post(
-	"/convert-to-moderator/:adminId",
-	authMiddleware.authUser,
-	checkRoleMiddleware.checkRole([enumsConfig.UserRole.ADMIN]),
-	adminsMiddleware.validateAdminIdParam,
-	adminsMiddleware.validateAdminExistance,
-	adminController.convertToModerator
-);
+  '/convert-to-moderator/:adminId',
+  authMiddleware.authUser,
+  checkRoleMiddleware.checkRole([enumsConfig.UserRole.ADMIN]),
+  adminsMiddleware.validateAdminIdParam,
+  adminsMiddleware.validateAdminExistance,
+  adminController.convertToModerator
+)
 
 /**
  * @swagger
@@ -512,15 +512,15 @@ router.post(
  *                   example: false
  */
 router.patch(
-	"/:adminId",
-	authMiddleware.authUser,
-	checkRoleMiddleware.checkRole([enumsConfig.UserRole.ADMIN]),
-	adminsMiddleware.validateAdminIdParam,
-	adminsMiddleware.validateAdminExistance,
-	adminsMiddleware.validateUpdateAdmin,
-	uploadMiddleware.single("profileImage"),
-	adminController.updateAdmin
-);
+  '/:adminId',
+  authMiddleware.authUser,
+  checkRoleMiddleware.checkRole([enumsConfig.UserRole.ADMIN]),
+  adminsMiddleware.validateAdminIdParam,
+  adminsMiddleware.validateAdminExistance,
+  adminsMiddleware.validateUpdateAdmin,
+  uploadMiddleware.single('profileImage'),
+  adminController.updateAdmin
+)
 
 /**
  * @swagger
@@ -604,12 +604,12 @@ router.patch(
  *                   example: false
  */
 router.delete(
-	"/:adminId",
-	authMiddleware.authUser,
-	checkRoleMiddleware.checkRole([enumsConfig.UserRole.ADMIN]),
-	adminsMiddleware.validateAdminIdParam,
-	adminsMiddleware.validateAdminExistance,
-	adminController.deleteAdmin
-);
+  '/:adminId',
+  authMiddleware.authUser,
+  checkRoleMiddleware.checkRole([enumsConfig.UserRole.ADMIN]),
+  adminsMiddleware.validateAdminIdParam,
+  adminsMiddleware.validateAdminExistance,
+  adminController.deleteAdmin
+)
 
-export default router;
+export default router

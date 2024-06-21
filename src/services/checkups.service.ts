@@ -1,5 +1,5 @@
-import prisma from "../../db/prisma";
-import { CreateCheckup, UpdateCheckup } from "../dto/checkups.dto";
+import prisma from '../../db/prisma'
+import { CreateCheckup, UpdateCheckup } from '../dto/checkups.dto'
 
 /**
  * Retrieves a list of checkups based on the provided parameters.
@@ -9,20 +9,16 @@ import { CreateCheckup, UpdateCheckup } from "../dto/checkups.dto";
  * @param {"desc" | "asc"} sortingOrder - The sorting order for the results, defaults to "desc".
  * @return {Promise<Checkup[]>} An array of checkup objects based on the specified parameters.
  */
-const getAllCheckups = (
-  skip: number,
-  take: number,
-  sortingOrder: "desc" | "asc" = "desc"
-) => {
+const getAllCheckups = (skip: number, take: number, sortingOrder: 'desc' | 'asc' = 'desc') => {
   return prisma.checkup.findMany({
     skip: skip,
     take: take,
 
     orderBy: {
-      createdAt: sortingOrder,
-    },
-  });
-};
+      createdAt: sortingOrder
+    }
+  })
+}
 
 /**
  * Retrieves all checkups for a specific patient.
@@ -37,21 +33,21 @@ const getAllPatientCheckups = (
   patientId: number,
   skip: number,
   take: number,
-  sortingOrder: "desc" | "asc" = "desc"
+  sortingOrder: 'desc' | 'asc' = 'desc'
 ) => {
   return prisma.checkup.findMany({
     where: {
-      userId: patientId,
+      userId: patientId
     },
 
     skip: skip,
     take: take,
 
     orderBy: {
-      createdAt: sortingOrder,
-    },
-  });
-};
+      createdAt: sortingOrder
+    }
+  })
+}
 
 /**
  * Retrieves a single checkup for a given id and patient id.
@@ -64,10 +60,10 @@ const getSingleCheckup = (id: number, patientId: number) => {
   return prisma.checkup.findFirst({
     where: {
       id,
-      userId: patientId,
-    },
-  });
-};
+      userId: patientId
+    }
+  })
+}
 
 /**
  * Retrieves checkup records by patient id.
@@ -78,10 +74,10 @@ const getSingleCheckup = (id: number, patientId: number) => {
 const getCheckupByPatientId = (patientId: number) => {
   return prisma.checkup.findMany({
     where: {
-      userId: patientId,
-    },
-  });
-};
+      userId: patientId
+    }
+  })
+}
 
 /**
  * Creates a checkup for a patient.
@@ -95,10 +91,10 @@ const createCheckup = (checkup: CreateCheckup, patientId: number) => {
     data: {
       date: checkup.date,
       userId: patientId,
-      type: checkup.type,
-    },
-  });
-};
+      type: checkup.type
+    }
+  })
+}
 
 /**
  * Updates a checkup for a specific patient.
@@ -108,20 +104,16 @@ const createCheckup = (checkup: CreateCheckup, patientId: number) => {
  * @param {UpdateCheckup} data - The data to update the checkup with
  * @return {Promise<Checkup>} The updated checkup
  */
-const updateCheckup = (
-  patientId: number,
-  checkupId: number,
-  data: UpdateCheckup
-) => {
+const updateCheckup = (patientId: number, checkupId: number, data: UpdateCheckup) => {
   return prisma.checkup.update({
     where: {
       id: checkupId,
-      userId: patientId,
+      userId: patientId
     },
 
-    data: data,
-  });
-};
+    data: data
+  })
+}
 
 /**
  * Deletes a checkup for a given patient.
@@ -134,10 +126,10 @@ const deleteCheckup = (checkupId: number, patientId: number) => {
   return prisma.checkup.delete({
     where: {
       id: checkupId,
-      userId: patientId,
-    },
-  });
-};
+      userId: patientId
+    }
+  })
+}
 
 export default {
   getAllCheckups,
@@ -146,5 +138,5 @@ export default {
   createCheckup,
   updateCheckup,
   deleteCheckup,
-  getCheckupByPatientId,
-};
+  getCheckupByPatientId
+}

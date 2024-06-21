@@ -1,7 +1,7 @@
-import enumsConfig from "../../config/enums.config";
-import prisma from "../../db/prisma";
-import { UpdateAdmin } from "../dto/admins.dto";
-import cloudinary from "../utils/cloudinary.util";
+import enumsConfig from '../../config/enums.config'
+import prisma from '../../db/prisma'
+import { UpdateAdmin } from '../dto/admins.dto'
+import cloudinary from '../utils/cloudinary.util'
 
 /**
  * Retrieves a single admin user based on the provided adminId.
@@ -10,13 +10,13 @@ import cloudinary from "../utils/cloudinary.util";
  * @return {Promise<User>} A promise that resolves to the admin user object if found, otherwise null.
  */
 const getSingleAdmin = (adminId: number) => {
-	return prisma.user.findUnique({
-		where: {
-			id: adminId,
-			role: enumsConfig.UserRole.ADMIN,
-		},
-	});
-};
+  return prisma.user.findUnique({
+    where: {
+      id: adminId,
+      role: enumsConfig.UserRole.ADMIN
+    }
+  })
+}
 
 /**
  * Updates an admin user with the specified ID.
@@ -26,15 +26,15 @@ const getSingleAdmin = (adminId: number) => {
  * @return {Promise<User>} The updated admin user.
  */
 const updateAdmin = (adminId: number, adminData: UpdateAdmin) => {
-	return prisma.user.update({
-		where: {
-			id: adminId,
-			role: enumsConfig.UserRole.ADMIN,
-		},
+  return prisma.user.update({
+    where: {
+      id: adminId,
+      role: enumsConfig.UserRole.ADMIN
+    },
 
-		data: adminData,
-	});
-};
+    data: adminData
+  })
+}
 
 /**
  * Deletes an admin user with the given adminId.
@@ -43,19 +43,19 @@ const updateAdmin = (adminId: number, adminData: UpdateAdmin) => {
  * @return {Promise} A Promise that resolves to the deleted user
  */
 const deleteAdmin = async (adminId: number) => {
-	const targetAdmin = await getSingleAdmin(adminId);
+  const targetAdmin = await getSingleAdmin(adminId)
 
-	if (targetAdmin?.profileImagePublicId) {
-		await cloudinary.uploader.destroy(targetAdmin.profileImagePublicId);
-	}
+  if (targetAdmin?.profileImagePublicId) {
+    await cloudinary.uploader.destroy(targetAdmin.profileImagePublicId)
+  }
 
-	return prisma.user.delete({
-		where: {
-			id: adminId,
-			role: enumsConfig.UserRole.ADMIN,
-		},
-	});
-};
+  return prisma.user.delete({
+    where: {
+      id: adminId,
+      role: enumsConfig.UserRole.ADMIN
+    }
+  })
+}
 
 /**
  * Updates the role of the user with the given moderatorId to "ADMIN" in the database.
@@ -64,16 +64,16 @@ const deleteAdmin = async (adminId: number) => {
  * @return {Promise<User>} The updated user object representing the user with the new role
  */
 const convertToAdmin = (moderatorId: number) => {
-	return prisma.user.update({
-		where: {
-			id: moderatorId,
-			role: "MODERATOR",
-		},
-		data: {
-			role: enumsConfig.UserRole.ADMIN,
-		},
-	});
-};
+  return prisma.user.update({
+    where: {
+      id: moderatorId,
+      role: 'MODERATOR'
+    },
+    data: {
+      role: enumsConfig.UserRole.ADMIN
+    }
+  })
+}
 
 /**
  * Updates the role of a user with the provided adminId to "MODERATOR".
@@ -82,21 +82,21 @@ const convertToAdmin = (moderatorId: number) => {
  * @return {Promise<User>} The updated user with the role changed to "MODERATOR".
  */
 const convertToModerator = (adminId: number) => {
-	return prisma.user.update({
-		where: {
-			id: adminId,
-			role: enumsConfig.UserRole.ADMIN,
-		},
-		data: {
-			role: "MODERATOR",
-		},
-	});
-};
+  return prisma.user.update({
+    where: {
+      id: adminId,
+      role: enumsConfig.UserRole.ADMIN
+    },
+    data: {
+      role: 'MODERATOR'
+    }
+  })
+}
 
 export default {
-	getSingleAdmin,
-	updateAdmin,
-	deleteAdmin,
-	convertToAdmin,
-	convertToModerator,
-};
+  getSingleAdmin,
+  updateAdmin,
+  deleteAdmin,
+  convertToAdmin,
+  convertToModerator
+}

@@ -1,8 +1,8 @@
-import jwt from "jsonwebtoken";
+import jwt from 'jsonwebtoken'
 
 type TokenData = {
-  [key: string]: any;
-};
+  [key: string]: any
+}
 
 /**
  * Generates a web token using the provided TokenData.
@@ -11,8 +11,8 @@ type TokenData = {
  * @return {string} The generated web token.
  */
 const generateWebToken = (data: TokenData) => {
-  return jwt.sign(data, process.env.JWT_SECRET_KEY!);
-};
+  return jwt.sign(data, process.env.JWT_SECRET_KEY!)
+}
 
 /**
  * Verifies the given web token.
@@ -21,7 +21,7 @@ const generateWebToken = (data: TokenData) => {
  * @return {any} The verified token
  */
 const verifyWebToken = (token: string) => {
-  return jwt.verify(token, process.env.JWT_SECRET_KEY!);
-};
+  return jwt.verify(token, process.env.JWT_SECRET_KEY!)
+}
 
-export default { generateWebToken, verifyWebToken };
+export default { generateWebToken, verifyWebToken }

@@ -1,17 +1,17 @@
-import { z } from "zod";
+import { z } from 'zod'
 
 const SignIn = z.object({
   email: z.string().email(),
   password: z
     .string()
     .min(8, {
-      message: "Your password should be at least 8 characters",
+      message: 'Your password should be at least 8 characters'
     })
     .max(24, {
-      message: "Your password should be at most 24 characters",
+      message: 'Your password should be at most 24 characters'
     }),
-  role: z.enum(["ADMIN", "MODERATOR", "PATIENT"]),
-});
+  role: z.enum(['ADMIN', 'MODERATOR', 'PATIENT'])
+})
 
 const SignUp = z.object({
   firstName: z.string(),
@@ -20,13 +20,13 @@ const SignUp = z.object({
   password: z
     .string()
     .min(8, {
-      message: "Your password should be at least 8 characters",
+      message: 'Your password should be at least 8 characters'
     })
     .max(24, {
-      message: "Your password should be at most 24 characters",
+      message: 'Your password should be at most 24 characters'
     }),
   phoneNumber: z.string(),
-  address: z.string().optional(),
-});
+  address: z.string().optional()
+})
 
-export default { SignIn, SignUp };
+export default { SignIn, SignUp }

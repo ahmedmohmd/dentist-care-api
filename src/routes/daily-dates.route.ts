@@ -1,7 +1,7 @@
-import express from "express";
-import dailyDatesController from "../controllers/daily-dates.controller";
+import express from 'express'
+import dailyDatesController from '../controllers/daily-dates.controller'
 
-const router = express.Router();
+const router = express.Router()
 
 /**
  * @swagger
@@ -106,7 +106,7 @@ const router = express.Router();
  *                   description: The success status
  *                   example: false
  */
-router.get("/", dailyDatesController.getAllDates);
+router.get('/', dailyDatesController.getAllDates)
 
 /**
  * @swagger
@@ -182,6 +182,6 @@ router.get("/", dailyDatesController.getAllDates);
  *                   description: The success status
  *                   example: false
  */
-router.post("/", dailyDatesController.releaseAllDates);
+router.post('/', dailyDatesController.releaseAllDates)
 
-export default router;
+export default router

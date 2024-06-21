@@ -1,12 +1,12 @@
-import express from "express";
+import express from 'express'
 
-import enumsConfig from "../../config/enums.config";
-import checkupsController from "../controllers/checkups.controller";
-import authMiddleware from "../middleware/auth.middleware";
-import checkRoleMiddleware from "../middleware/check-role.middleware";
-import { checkupsMiddleware } from "../middleware/checkups.middleware";
+import enumsConfig from '../../config/enums.config'
+import checkupsController from '../controllers/checkups.controller'
+import authMiddleware from '../middleware/auth.middleware'
+import checkRoleMiddleware from '../middleware/check-role.middleware'
+import { checkupsMiddleware } from '../middleware/checkups.middleware'
 
-const router = express.Router();
+const router = express.Router()
 
 /**
  * @swagger
@@ -127,14 +127,11 @@ const router = express.Router();
  *               $ref: '#/components/schemas/Error500'
  */
 router.get(
-	"/all",
-	authMiddleware.authUser,
-	checkRoleMiddleware.checkRole([
-		enumsConfig.UserRole.ADMIN,
-		enumsConfig.UserRole.MODERATOR,
-	]),
-	checkupsController.getAllCheckups
-);
+  '/all',
+  authMiddleware.authUser,
+  checkRoleMiddleware.checkRole([enumsConfig.UserRole.ADMIN, enumsConfig.UserRole.MODERATOR]),
+  checkupsController.getAllCheckups
+)
 
 /**
  * @swagger
@@ -163,15 +160,15 @@ router.get(
  *               $ref: '#/components/schemas/Error500'
  */
 router.get(
-	"/",
-	authMiddleware.authUser,
-	checkRoleMiddleware.checkRole([
-		enumsConfig.UserRole.ADMIN,
-		enumsConfig.UserRole.MODERATOR,
-		enumsConfig.UserRole.PATIENT,
-	]),
-	checkupsController.getAllCheckups
-);
+  '/',
+  authMiddleware.authUser,
+  checkRoleMiddleware.checkRole([
+    enumsConfig.UserRole.ADMIN,
+    enumsConfig.UserRole.MODERATOR,
+    enumsConfig.UserRole.PATIENT
+  ]),
+  checkupsController.getAllCheckups
+)
 
 /**
  * @swagger
@@ -224,17 +221,17 @@ router.get(
  *                   example: false
  */
 router.get(
-	"/:checkupId",
-	authMiddleware.authUser,
-	checkRoleMiddleware.checkRole([
-		enumsConfig.UserRole.ADMIN,
-		enumsConfig.UserRole.MODERATOR,
-		enumsConfig.UserRole.PATIENT,
-	]),
-	checkupsMiddleware.validateCheckupIdParam,
-	checkupsMiddleware.validateCheckupExistance,
-	checkupsController.getSingleCheckup
-);
+  '/:checkupId',
+  authMiddleware.authUser,
+  checkRoleMiddleware.checkRole([
+    enumsConfig.UserRole.ADMIN,
+    enumsConfig.UserRole.MODERATOR,
+    enumsConfig.UserRole.PATIENT
+  ]),
+  checkupsMiddleware.validateCheckupIdParam,
+  checkupsMiddleware.validateCheckupExistance,
+  checkupsController.getSingleCheckup
+)
 
 /**
  * @swagger
@@ -340,12 +337,12 @@ router.get(
  *
  */
 router.post(
-	"/",
-	authMiddleware.authUser,
-	checkRoleMiddleware.checkRole([enumsConfig.UserRole.PATIENT]),
-	checkupsMiddleware.validateCreateCheckup,
-	checkupsController.createCheckup
-);
+  '/',
+  authMiddleware.authUser,
+  checkRoleMiddleware.checkRole([enumsConfig.UserRole.PATIENT]),
+  checkupsMiddleware.validateCreateCheckup,
+  checkupsController.createCheckup
+)
 
 /**
  * @swagger
@@ -457,14 +454,14 @@ router.post(
  *                   example: false
  */
 router.patch(
-	"/:checkupId",
-	authMiddleware.authUser,
-	checkRoleMiddleware.checkRole([enumsConfig.UserRole.PATIENT]),
-	checkupsMiddleware.validateCheckupIdParam,
-	checkupsMiddleware.validateCheckupExistance,
-	checkupsMiddleware.validateUpdateCheckup,
-	checkupsController.updateCheckup
-);
+  '/:checkupId',
+  authMiddleware.authUser,
+  checkRoleMiddleware.checkRole([enumsConfig.UserRole.PATIENT]),
+  checkupsMiddleware.validateCheckupIdParam,
+  checkupsMiddleware.validateCheckupExistance,
+  checkupsMiddleware.validateUpdateCheckup,
+  checkupsController.updateCheckup
+)
 
 /**
  * @swagger
@@ -551,16 +548,16 @@ router.patch(
  *                   example: false
  */
 router.delete(
-	"/:checkupId",
-	authMiddleware.authUser,
-	checkRoleMiddleware.checkRole([
-		enumsConfig.UserRole.ADMIN,
-		enumsConfig.UserRole.MODERATOR,
-		enumsConfig.UserRole.PATIENT,
-	]),
-	checkupsMiddleware.validateCheckupIdParam,
-	checkupsMiddleware.validateCheckupExistance,
-	checkupsController.deleteCheckup
-);
+  '/:checkupId',
+  authMiddleware.authUser,
+  checkRoleMiddleware.checkRole([
+    enumsConfig.UserRole.ADMIN,
+    enumsConfig.UserRole.MODERATOR,
+    enumsConfig.UserRole.PATIENT
+  ]),
+  checkupsMiddleware.validateCheckupIdParam,
+  checkupsMiddleware.validateCheckupExistance,
+  checkupsController.deleteCheckup
+)
 
-export default router;
+export default router

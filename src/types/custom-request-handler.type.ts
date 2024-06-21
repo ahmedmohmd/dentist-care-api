@@ -1,3 +1,3 @@
-import { RequestHandler } from "express";
+import { RequestHandler } from 'express'
 
 interface CustomRequestHandler extends RequestHandler {}

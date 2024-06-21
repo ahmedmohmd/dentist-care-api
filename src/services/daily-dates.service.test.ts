@@ -1,65 +1,65 @@
-import { describe, expect, it, vi } from "vitest";
-import prisma from "../../db/__mocks__/prisma";
-import dailyDatesService from "./daily-dates.service";
+import { describe, expect, it, vi } from 'vitest'
+import prisma from '../../db/__mocks__/prisma'
+import dailyDatesService from './daily-dates.service'
 
-vi.mock("../../db/prisma.ts");
+vi.mock('../../db/prisma.ts')
 
-describe("getAllDates()", () => {
-  it("Should Return All Dates", async () => {
+describe('getAllDates()', () => {
+  it('Should Return All Dates', async () => {
     const expectedResult = [
-      { id: 1, date: "04:00", available: true },
-      { id: 2, date: "06:00", available: true },
-    ];
+      { id: 1, date: '04:00', available: true },
+      { id: 2, date: '06:00', available: true }
+    ]
 
-    prisma.dailyDates.findMany.mockResolvedValue(expectedResult as any);
-    const dates = await dailyDatesService.getAllDates();
+    prisma.dailyDates.findMany.mockResolvedValue(expectedResult as any)
+    const dates = await dailyDatesService.getAllDates()
 
-    expect(dates).toEqual(expectedResult);
-  });
-});
+    expect(dates).toEqual(expectedResult)
+  })
+})
 
-describe("takeDate()", () => {
-  it("Should Reset The Date And Make It Unavailable", async () => {
-    const date = "04:00";
+describe('takeDate()', () => {
+  it('Should Reset The Date And Make It Unavailable', async () => {
+    const date = '04:00'
     const expectedResult = {
       id: 1,
       date: date,
-      available: false,
-    };
+      available: false
+    }
 
-    prisma.dailyDates.update.mockResolvedValue(expectedResult as any);
-    const takenDate = await dailyDatesService.takeDate(date);
+    prisma.dailyDates.update.mockResolvedValue(expectedResult as any)
+    const takenDate = await dailyDatesService.takeDate(date)
 
-    expect(takenDate).toEqual(expectedResult);
-  });
-});
+    expect(takenDate).toEqual(expectedResult)
+  })
+})
 
-describe("releaseDate()", () => {
-  it("Should Reset The Date And Make It Available", async () => {
-    const date = "04:00";
+describe('releaseDate()', () => {
+  it('Should Reset The Date And Make It Available', async () => {
+    const date = '04:00'
     const expectedResult = {
       id: 1,
       date: date,
-      available: true,
-    };
+      available: true
+    }
 
-    prisma.dailyDates.update.mockResolvedValue(expectedResult as any);
-    const releasedDate = await dailyDatesService.releaseDate(date);
+    prisma.dailyDates.update.mockResolvedValue(expectedResult as any)
+    const releasedDate = await dailyDatesService.releaseDate(date)
 
-    expect(releasedDate).toEqual(expectedResult);
-  });
-});
+    expect(releasedDate).toEqual(expectedResult)
+  })
+})
 
-describe("releaseAllDates()", () => {
-  it("Should Reset All Dates And Make Them Available", async () => {
+describe('releaseAllDates()', () => {
+  it('Should Reset All Dates And Make Them Available', async () => {
     const expectedResult = [
-      { id: 1, date: "04:00", available: true },
-      { id: 2, date: "06:00", available: true },
-    ];
+      { id: 1, date: '04:00', available: true },
+      { id: 2, date: '06:00', available: true }
+    ]
 
-    prisma.dailyDates.updateMany.mockResolvedValue(expectedResult as any);
-    const releasedDates = await dailyDatesService.releaseAllDates();
+    prisma.dailyDates.updateMany.mockResolvedValue(expectedResult as any)
+    const releasedDates = await dailyDatesService.releaseAllDates()
 
-    expect(releasedDates).toEqual(expectedResult);
-  });
-});
+    expect(releasedDates).toEqual(expectedResult)
+  })
+})

@@ -1,9 +1,8 @@
-import express from "express";
-import authController from "../controllers/auth.controller";
-import { patientsMiddleware } from "../middleware/patients.middleware";
-import uploadMiddleware from "../middleware/upload.middleware";
+import express from 'express'
+import authController from '../controllers/auth.controller'
+import uploadMiddleware from '../middleware/upload.middleware'
 
-const router = express.Router();
+const router = express.Router()
 
 /**
  * @swagger
@@ -147,7 +146,7 @@ const router = express.Router();
  *                   description: The success status
  *                   example: false
  */
-router.post("/sign-in", authController.signIn);
+router.post('/sign-in', authController.signIn)
 
 /**
  * @swagger
@@ -208,10 +207,13 @@ router.post("/sign-in", authController.signIn);
  *                   example: false
  */
 router.post(
-	"/sign-up",
-	// patientsMiddleware.validateCreatePatient,
-	uploadMiddleware.single("profileImage"),
-	authController.signUp
-);
+  '/sign-up',
+  // patientsMiddleware.validateCreatePatient,
 
-export default router;
+  uploadMiddleware.single('profileImage'),
+
+  // httpInterceptor(["password"]),
+  authController.signUp
+)
+
+export default router

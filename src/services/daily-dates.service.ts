@@ -1,4 +1,4 @@
-import prisma from "../../db/prisma";
+import prisma from '../../db/prisma'
 
 /**
  * Retrieves all daily dates that are available.
@@ -8,10 +8,10 @@ import prisma from "../../db/prisma";
 const getAllDates = () => {
   return prisma.dailyDates.findMany({
     where: {
-      available: true,
-    },
-  });
-};
+      available: true
+    }
+  })
+}
 
 /**
  * Takes a date and updates the availability in the database.
@@ -22,14 +22,14 @@ const getAllDates = () => {
 const takeDate = (date: string) => {
   return prisma.dailyDates.update({
     where: {
-      date: date,
+      date: date
     },
 
     data: {
-      available: false,
-    },
-  });
-};
+      available: false
+    }
+  })
+}
 
 /**
  * Updates the release date for a specific daily date in the database.
@@ -40,14 +40,14 @@ const takeDate = (date: string) => {
 const releaseDate = (date: string) => {
   return prisma.dailyDates.update({
     where: {
-      date: date,
+      date: date
     },
 
     data: {
-      available: true,
-    },
-  });
-};
+      available: true
+    }
+  })
+}
 
 /**
  * Updates all daily dates to be available.
@@ -57,14 +57,14 @@ const releaseDate = (date: string) => {
 const releaseAllDates = () => {
   return prisma.dailyDates.updateMany({
     data: {
-      available: true,
-    },
-  });
-};
+      available: true
+    }
+  })
+}
 
 export default {
   getAllDates,
   takeDate,
   releaseDate,
-  releaseAllDates,
-};
+  releaseAllDates
+}

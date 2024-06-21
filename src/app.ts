@@ -1,13 +1,16 @@
+import compression from 'compression'
 import cors from 'cors'
 import 'dotenv/config'
 import express from 'express'
 import 'express-async-errors'
 import { rateLimit } from 'express-rate-limit'
+import { RedisStore } from 'rate-limit-redis'
 import swaggerJsdoc from 'swagger-jsdoc'
 import swaggerUi from 'swagger-ui-express'
 import prisma from '../db/prisma'
 
 import constantsConfig from '../config/constants.config'
+import redisClient from '../db/redis'
 import globalErrorHandler from './controllers/global-error-handler.controller'
 import adminsRouter from './routes/admins.route'
 import authRouter from './routes/auth.route'
@@ -28,11 +31,14 @@ app.use(
 )
 
 const limiter = rateLimit({
-  windowMs: 60 * 1000, // 1 minute
-  limit: 100, // Limit each IP to 100 requests per windowMs
-  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-  legacyHeaders: false // Disable the `X-RateLimit-*` headers.
-  // store: ... , // Redis, Memcached, etc. See below.
+  windowMs: 60 * 1000,
+  limit: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  store: new RedisStore({
+    // @ts-expect-error - Known issue: the `call` function is not present in @types/ioredis
+    sendCommand: (...args: string[]) => redisClient.call(...args)
+  })
 })
 
 app.use(limiter)

@@ -43,6 +43,8 @@ const limiter = rateLimit({
 
 app.use(limiter)
 
+app.use(compression())
+
 // Handle swagger docs
 const specs = swaggerJsdoc(constantsConfig.swaggerConfigOptions)
 

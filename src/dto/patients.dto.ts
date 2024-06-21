@@ -1,25 +1,9 @@
-import Role from '../types/role.types'
+import { SignUp } from './auth.dto'
 
-type CreatePatient = {
-  firstName: string
-  lastName: string
-  email: string
-  password: string
-  phoneNumber: string
-  address: string
-  role: Role
-  profileImagePublicId?: string
-  profileImage?: string
+interface ProfileImagePublicId {
+  profileImagePublicId?: string | null
 }
 
-type UpdatePatient = {
-  firstName?: string
-  lastName?: string
-  email?: string
-  password?: string
-  phoneNumber?: string
-  address?: string
-  profileImagePublicId?: string
-}
+type UpdatePatient = Partial<SignUp & ProfileImagePublicId>
 
-export { CreatePatient, UpdatePatient }
+export { UpdatePatient }

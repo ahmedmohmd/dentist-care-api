@@ -12,6 +12,7 @@ import handleRoutes from './startup/handle-routes'
 
 const app = express()
 
+// global configs
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
@@ -20,11 +21,13 @@ handleCors(app)
 handleRateLimiting(app)
 handleCompression(app)
 
+// api docs
 handleDocs(app)
 handleRoutes(app)
-
+// db
 connectDB()
 
+// bootstrap func
 const PORT = Number(process.env.PORT || constantsConfig.port)
 
 async function bootstrap() {

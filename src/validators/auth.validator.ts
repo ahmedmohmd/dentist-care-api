@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-const SignIn = z.object({
+const signInValidator = z.object({
   email: z.string().email(),
   password: z
     .string()
@@ -13,7 +13,7 @@ const SignIn = z.object({
   role: z.enum(['ADMIN', 'MODERATOR', 'PATIENT'])
 })
 
-const SignUp = z.object({
+const signUpValidator = z.object({
   firstName: z.string(),
   lastName: z.string(),
   email: z.string().email(),
@@ -26,7 +26,7 @@ const SignUp = z.object({
       message: 'Your password should be at most 24 characters'
     }),
   phoneNumber: z.string(),
-  address: z.string().optional()
+  address: z.string()
 })
 
-export default { SignIn, SignUp }
+export default { signInValidator, signUpValidator }

@@ -1,16 +1,28 @@
+import createHttpError from 'http-errors'
 import enumsConfig from '../../config/enums.config'
 import prisma from '../../db/prisma'
-import { CreatePatient, UpdatePatient } from '../dto/patients.dto'
+import { UpdatePatient } from '../dto/patients.dto'
+import cacheUtil from '../utils/cache.util'
 import cloudinary from '../utils/cloudinary.util'
 import hashPasswordUtil from '../utils/hash-password.util'
+import { updateImage } from './image.service'
 
-/**
- * Retrieves all patients from the database.
- *
- * @return {Promise<User[]>} An array of user objects representing patients.
- */
-const getAllPatients = ({ skip, take, sortingOrder }: { skip: number; take: number; sortingOrder: 'desc' | 'asc' }) => {
-  return prisma.user.findMany({
+const getAllPatients = async ({
+  skip,
+  take,
+  sortingOrder
+}: {
+  skip: number
+  take: number
+  sortingOrder: 'desc' | 'asc'
+}) => {
+  const patientsFromCache = await cacheUtil.get(`patients:page=${skip}:limit=${take}:order=${sortingOrder}`)
+
+  if (patientsFromCache) {
+    return patientsFromCache
+  }
+
+  const allPatients = await prisma.user.findMany({
     where: {
       role: enumsConfig.UserRole.PATIENT
     },
@@ -22,29 +34,31 @@ const getAllPatients = ({ skip, take, sortingOrder }: { skip: number; take: numb
       createdAt: sortingOrder
     }
   })
+
+  await cacheUtil.set(`patients:page=${skip}:limit=${take}:order=${sortingOrder}`, allPatients)
+
+  return allPatients
 }
 
-/**
- * A function that retrieves a single patient based on the provided patientId.
- *
- * @param {number} patientId - The unique identifier of the patient to retrieve.
- * @return {Promise<User>} A promise that resolves to the user object representing the patient.
- */
-const getSinglePatient = (patientId: number) => {
-  return prisma.user.findUnique({
+const getSinglePatient = async (patientId: number) => {
+  const patientFromCache = await cacheUtil.get(`single-patient:${patientId}`)
+
+  if (patientFromCache) {
+    return patientFromCache
+  }
+
+  const targetPatient = await prisma.user.findUnique({
     where: {
       id: patientId,
       role: enumsConfig.UserRole.PATIENT
     }
   })
+
+  await cacheUtil.set(`single-patient:${patientId}`, targetPatient)
+
+  return targetPatient
 }
 
-/**
- * Retrieve a patient by their email.
- *
- * @param {string} patientEmail - The email of the patient to retrieve.
- * @return {Promise<User>} The unique user object representing the patient.
- */
 const getPatientByEmail = (patientEmail: string) => {
   return prisma.user.findUnique({
     where: {
@@ -54,52 +68,30 @@ const getPatientByEmail = (patientEmail: string) => {
   })
 }
 
-/**
- * Creates a new patient using the provided patient data.
- *
- * @param {CreatePatient} patientData - The data needed to create a new patient.
- * @return {Promise<User>} A Promise that resolves to the newly created user.
- */
-const createPatient = async (patientData: CreatePatient) => {
-  return prisma.user.create({
-    data: {
-      address: patientData.address,
-      firstName: patientData.firstName,
-      lastName: patientData.lastName,
-      email: patientData.email,
-      password: await hashPasswordUtil.encrypt(patientData.password),
-      phoneNumber: patientData.phoneNumber,
-      role: patientData.role,
-      profileImagePublicId: patientData.profileImagePublicId,
-      profileImage: patientData.profileImage
-    }
-  })
-}
+const updatePatient = async (patientId: number, patientData: UpdatePatient) => {
+  const { newImageId, newImageUrl } = await updateImage(patientData?.profileImagePublicId, patientData?.profileImage)
 
-/**
- * Updates a patient's information in the database.
- *
- * @param {number} patientId - The ID of the patient to be updated
- * @param {UpdatePatient} patientData - The updated patient data
- * @return {Promise<User>} The updated user object
- */
-const updatePatient = (patientId: number, patientData: UpdatePatient) => {
+  if (!patientData.profileImage) {
+    throw new createHttpError.BadRequest('Image is not correct!')
+  }
+
+  const newImageData = Object.assign({}, patientData, {
+    profileImagePublicId: newImageId,
+    profileImage: newImageUrl,
+
+    password: patientData.password && (await hashPasswordUtil.encrypt(patientData.password))
+  })
+
   return prisma.user.update({
     where: {
       id: patientId,
       role: enumsConfig.UserRole.PATIENT
     },
 
-    data: patientData
+    data: newImageData
   })
 }
 
-/**
- * Deletes a patient with the specified ID.
- *
- * @param {number} patientId - The ID of the patient to delete
- * @return {Promise<any>} A promise that resolves to the deleted patient
- */
 const deletePatient = async (patientId: number) => {
   const targetPatient = await getSinglePatient(patientId)
 
@@ -120,6 +112,5 @@ export default {
   updatePatient,
   deletePatient,
   getAllPatients,
-  createPatient,
   getPatientByEmail
 }

@@ -3,6 +3,10 @@ import cloudinary from '../utils/cloudinary.util'
 
 type ImageId = string | undefined | null
 type ImageFile = Express.Multer.File | null | undefined
+interface ImageProcessResponse {
+  imageUrl: string
+  imageId: null | string
+}
 
 /**
  * Converts an image file to a data URI.
@@ -24,21 +28,21 @@ const fromImageToDataURI = (file: Express.Multer.File) => {
  * @return {Promise<{imageUrl: string, imageId: string | null}>} - An object containing the secure URL and public ID of the uploaded image.
  */
 const uploadImage = async (imageFile: ImageFile) => {
+  const response: Partial<ImageProcessResponse> = {}
+
   if (imageFile) {
     const dataURI = fromImageToDataURI(imageFile)
 
     const { public_id, secure_url } = await cloudinary.uploader.upload(dataURI)
 
-    return {
-      imageUrl: secure_url,
-      imageId: public_id
-    }
+    response.imageUrl = secure_url
+    response.imageId = public_id
+  } else {
+    response.imageId = null
+    response.imageUrl = constantsConfig.defaultProfileImage
   }
 
-  return {
-    imageUrl: constantsConfig.defaultProfileImage,
-    imageId: null
-  }
+  return response
 }
 
 /**

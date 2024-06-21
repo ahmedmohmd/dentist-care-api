@@ -1,5 +1,6 @@
 import express from 'express'
 import authController from '../controllers/auth.controller'
+import authMiddleware from '../middleware/auth.middleware'
 import uploadMiddleware from '../middleware/upload.middleware'
 
 const router = express.Router()
@@ -146,7 +147,7 @@ const router = express.Router()
  *                   description: The success status
  *                   example: false
  */
-router.post('/sign-in', authController.signIn)
+router.post('/sign-in', authMiddleware.validateSignIn, authController.signIn)
 
 /**
  * @swagger
@@ -206,14 +207,6 @@ router.post('/sign-in', authController.signIn)
  *                   description: The success status
  *                   example: false
  */
-router.post(
-  '/sign-up',
-  // patientsMiddleware.validateCreatePatient,
-
-  uploadMiddleware.single('profileImage'),
-
-  // httpInterceptor(["password"]),
-  authController.signUp
-)
+router.post('/sign-up', authMiddleware.validateSignUp, uploadMiddleware.single('profileImage'), authController.signUp)
 
 export default router

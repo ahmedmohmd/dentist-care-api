@@ -13,9 +13,7 @@ type SignUp = {
   password: string
   phoneNumber: string
   address: string
-  role: Role
-  profileImagePublicId?: string
-  profileImage?: string
+  profileImage?: Express.Multer.File
 }
 
 export { SignIn, SignUp }

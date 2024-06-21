@@ -3,7 +3,7 @@ import enumsConfig from '../../config/enums.config'
 import patientsController from '../controllers/patients.controller'
 import authMiddleware from '../middleware/auth.middleware'
 import checkRoleMiddleware from '../middleware/check-role.middleware'
-import { patientsMiddleware } from '../middleware/patients.middleware'
+import patientsMiddleware from '../middleware/patients.middleware'
 import uploadMiddleware from '../middleware/upload.middleware'
 
 const router = express.Router()
@@ -344,7 +344,7 @@ router.get(
     enumsConfig.UserRole.PATIENT
   ]),
   patientsMiddleware.validatePatientIdParam,
-  patientsMiddleware.validatePatientExistance,
+  patientsMiddleware.isPatientExists,
   patientsController.getSinglePatient
 )
 
@@ -453,7 +453,7 @@ router.patch(
   authMiddleware.authUser,
   checkRoleMiddleware.checkRole([enumsConfig.UserRole.PATIENT]),
   patientsMiddleware.validatePatientIdParam,
-  patientsMiddleware.validatePatientExistance,
+  patientsMiddleware.isPatientExists,
   patientsMiddleware.validateUpdatePatient,
   uploadMiddleware.single('profileImage'),
   patientsController.updatePatient
@@ -543,13 +543,9 @@ router.patch(
 router.delete(
   '/:patientId',
   authMiddleware.authUser,
-  checkRoleMiddleware.checkRole([
-    enumsConfig.UserRole.ADMIN,
-    enumsConfig.UserRole.MODERATOR,
-    enumsConfig.UserRole.PATIENT
-  ]),
+  checkRoleMiddleware.checkRole([enumsConfig.UserRole.ADMIN, enumsConfig.UserRole.PATIENT]),
   patientsMiddleware.validatePatientIdParam,
-  patientsMiddleware.validatePatientExistance,
+  patientsMiddleware.isPatientExists,
   patientsController.deletePatient
 )
 

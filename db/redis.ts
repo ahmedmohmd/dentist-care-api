@@ -1,13 +1,10 @@
 import Redis from 'ioredis'
+import logger from '../src/startup/handle-logging'
 
-const redisClient = new Redis({
-  // port: 6379,
-  // host: "127.0.0.1",
-  // enableOfflineQueue: false,
-})
+const redisClient = new Redis()
 
 redisClient.on('error', (err: any) => {
-  console.log(err)
+  logger.error(err)
 })
 
 export default redisClient

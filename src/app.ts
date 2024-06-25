@@ -7,6 +7,7 @@ import handleCompression from './startup/handle-compression'
 import handleCors from './startup/handle-cors'
 import connectDB from './startup/handle-db-connection'
 import handleDocs from './startup/handle-docs'
+import logger from './startup/handle-logging'
 import handleRateLimiting from './startup/handle-rate-limiting'
 import handleRoutes from './startup/handle-routes'
 import handleSecurity from './startup/handle-security'
@@ -34,7 +35,7 @@ const PORT = Number(process.env.PORT || constantsConfig.port)
 
 async function bootstrap() {
   app.listen(PORT, () => {
-    console.log(`listening on ${constantsConfig.apiEndPoint}`)
+    logger.info(`listening on ${constantsConfig.apiEndPoint}`)
   })
 }
 

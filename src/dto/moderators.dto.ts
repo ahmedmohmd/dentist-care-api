@@ -21,7 +21,7 @@ type CreateModerator = {
   phoneNumber: string
   address: string
   role: $Enums.Role
-  profileImage?: string
+  profileImage?: Express.Multer.File
 }
 
 type UpdateModerator = {
@@ -32,6 +32,7 @@ type UpdateModerator = {
   phoneNumber?: string
   address?: string
   role?: $Enums.Role
+  profileImage?: Express.Multer.File
   profileImagePublicId?: string
 }
 

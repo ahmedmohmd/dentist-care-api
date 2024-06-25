@@ -7,7 +7,7 @@ interface UpdateAdmin {
   password?: string
   phoneNumber?: string
   profileImagePublicId?: string
-  profileImage?: string
+  profileImage?: Express.Multer.File
   role: Role
 }
 

@@ -1,14 +1,13 @@
+import createHttpError from 'http-errors'
 import enumsConfig from '../../config/enums.config'
 import prisma from '../../db/prisma'
 import { CreateModerator, UpdateModerator } from '../dto/moderators.dto'
-import cloudinary from '../utils/cloudinary.util'
+import cacheUtil from '../utils/cache.util'
+import hashPasswordUtil from '../utils/hash-password.util'
+import jwtUtil from '../utils/jwt.util'
+import { deleteImage, updateImage, uploadImage } from './image.service'
 
-/**
- * Retrieves all moderators from the database.
- *
- * @return {Promise<User[]>} An array of User objects representing all moderators.
- */
-const getAllModerators = ({
+const getAllModerators = async ({
   skip,
   take,
   sortingOrder
@@ -17,7 +16,13 @@ const getAllModerators = ({
   take: number
   sortingOrder: 'desc' | 'asc'
 }) => {
-  return prisma.user.findMany({
+  const moderatorsFromCache = await cacheUtil.get(`moderators:page=${skip}:limit=${take}:order=${sortingOrder}`)
+
+  if (moderatorsFromCache) {
+    return moderatorsFromCache
+  }
+
+  const allModerators = await prisma.user.findMany({
     where: {
       role: enumsConfig.UserRole.MODERATOR
     },
@@ -29,66 +34,93 @@ const getAllModerators = ({
       createdAt: sortingOrder
     }
   })
+
+  await cacheUtil.set(`moderators:page=${skip}:limit=${take}:order=${sortingOrder}`, allModerators)
+
+  return allModerators
 }
 
-/**
- * Get a single moderator based on the moderatorId.
- *
- * @param {number} moderatorId - The ID of the moderator to retrieve.
- * @return {Promise<User>} The moderator with the specified ID.
- */
-const getSingleModerator = (moderatorId: number) => {
-  return prisma.user.findUnique({
+const getSingleModerator = async (moderatorId: number) => {
+  const moderatorFromCache = await cacheUtil.get(`single-moderator:${moderatorId}`)
+
+  if (moderatorFromCache) {
+    return moderatorFromCache
+  }
+
+  const targetModerator = await prisma.user.findUnique({
     where: {
       id: moderatorId,
       role: enumsConfig.UserRole.MODERATOR
     }
   })
+
+  await cacheUtil.set(`single-moderator:${moderatorId}`, targetModerator)
+
+  return targetModerator
 }
 
-/**
- * Create a moderator with the given moderator data.
- *
- * @param {CreateModerator} moderatorData - The data for creating the moderator
- * @return {Promise<User>} The created moderator
- */
-const createModerator = (moderatorData: CreateModerator) => {
-  return prisma.user.create({
-    data: {
-      ...moderatorData
-    }
+const createModerator = async (moderatorData: CreateModerator) => {
+  const { imageId, imageUrl } = await uploadImage(moderatorData.profileImage)
+
+  const createdModeratorData = Object.assign({}, moderatorData, {
+    profileImagePublicId: imageId,
+    profileImage: imageUrl,
+    password: await hashPasswordUtil.encrypt(moderatorData.password)
   })
+
+  const createdModerator = await prisma.user.create({
+    data: createdModeratorData
+  })
+
+  const token = await jwtUtil.generateWebToken({
+    id: createdModerator.id,
+    firstName: createdModerator.firstName,
+    lastName: createdModerator.lastName,
+    email: createdModerator.email,
+    profileImage: createdModerator.profileImage,
+    phoneNumber: createdModerator.phoneNumber,
+    address: createdModerator.address,
+    role: createdModerator.role
+  })
+
+  return {
+    user: createdModerator,
+    token
+  }
 }
 
-/**
- * Updates a moderator in the database.
- *
- * @param {number} moderatorId - The ID of the moderator to update
- * @param {UpdateModerator} moderatorData - The data to update for the moderator
- * @return {Promise<User>} The updated moderator
- */
-const updateModerator = (moderatorId: number, moderatorData: UpdateModerator) => {
+const updateModerator = async (moderatorId: number, moderatorData: UpdateModerator) => {
+  const { newImageId, newImageUrl } = await updateImage(
+    moderatorData?.profileImagePublicId,
+    moderatorData?.profileImage
+  )
+
+  if (!moderatorData.profileImage) {
+    throw new createHttpError.BadRequest('Image is not correct!')
+  }
+
+  const newModeratorData = Object.assign({}, moderatorData, {
+    profileImagePublicId: newImageId,
+    profileImage: newImageUrl,
+
+    password: moderatorData.password && (await hashPasswordUtil.encrypt(moderatorData.password))
+  })
+
   return prisma.user.update({
     where: {
       id: moderatorId,
       role: enumsConfig.UserRole.MODERATOR
     },
 
-    data: moderatorData
+    data: newModeratorData
   })
 }
 
-/**
- * Deletes a moderator user based on the provided moderatorId.
- *
- * @param {number} moderatorId - The ID of the moderator user to be deleted.
- * @return {Promise<User>} The deleted moderator user.
- */
 const deleteModerator = async (moderatorId: number) => {
   const targetModerator = await getSingleModerator(moderatorId)
 
   if (targetModerator?.profileImagePublicId) {
-    await cloudinary.uploader.destroy(targetModerator.profileImagePublicId)
+    await deleteImage(targetModerator?.profileImagePublicId)
   }
 
   return prisma.user.delete({
@@ -99,12 +131,6 @@ const deleteModerator = async (moderatorId: number) => {
   })
 }
 
-/**
- * Finds a user with the specified email and role as moderator.
- *
- * @param {string} email - The email of the user to search for.
- * @return {Promise<User>} A user object with the specified email and role as moderator.
- */
 const getModeratorByEmail = (email: string) => {
   return prisma.user.findUnique({
     where: {

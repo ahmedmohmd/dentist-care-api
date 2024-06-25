@@ -3,9 +3,8 @@ import enumsConfig from '../../config/enums.config'
 import prisma from '../../db/prisma'
 import { UpdatePatient } from '../dto/patients.dto'
 import cacheUtil from '../utils/cache.util'
-import cloudinary from '../utils/cloudinary.util'
 import hashPasswordUtil from '../utils/hash-password.util'
-import { updateImage } from './image.service'
+import { deleteImage, updateImage } from './image.service'
 
 const getAllPatients = async ({
   skip,
@@ -75,7 +74,7 @@ const updatePatient = async (patientId: number, patientData: UpdatePatient) => {
     throw new createHttpError.BadRequest('Image is not correct!')
   }
 
-  const newImageData = Object.assign({}, patientData, {
+  const newPatientData = Object.assign({}, patientData, {
     profileImagePublicId: newImageId,
     profileImage: newImageUrl,
 
@@ -88,7 +87,7 @@ const updatePatient = async (patientId: number, patientData: UpdatePatient) => {
       role: enumsConfig.UserRole.PATIENT
     },
 
-    data: newImageData
+    data: newPatientData
   })
 }
 
@@ -96,7 +95,7 @@ const deletePatient = async (patientId: number) => {
   const targetPatient = await getSinglePatient(patientId)
 
   if (targetPatient?.profileImagePublicId) {
-    await cloudinary.uploader.destroy(targetPatient.profileImagePublicId)
+    await deleteImage(targetPatient?.profileImagePublicId)
   }
 
   return prisma.user.delete({

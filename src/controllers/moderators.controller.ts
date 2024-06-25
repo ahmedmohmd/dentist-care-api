@@ -1,106 +1,55 @@
 import { RequestHandler } from 'express'
-import constantsConfig from '../../config/constants.config'
-import { CreateModerator, UpdateModerator } from '../dto/moderators.dto'
 import moderatorsService from '../services/moderators.service'
-import cacheUtil from '../utils/cache.util'
 import checkCheckupsQueryParams from '../utils/check-checkups-query-params.util'
-import cloudinary from '../utils/cloudinary.util'
 import customResponseUtil from '../utils/custom-response.util'
 import HttpCode from '../utils/http-status-code.util'
 
-const getAllModerators: RequestHandler = async (req, res, next) => {
-  try {
-    const { skip, take, sortingOrder } = checkCheckupsQueryParams(req, res)
+const getAllModerators: RequestHandler = async (req, res) => {
+  const { skip, take, sortingOrder } = checkCheckupsQueryParams(req, res)
 
-    const moderatorsFromCache = await cacheUtil.get(`moderators:page=${skip}:limit=${take}:order=${sortingOrder}`)
+  const allModerators = await moderatorsService.getAllModerators({
+    skip,
+    take,
+    sortingOrder
+  })
 
-    if (moderatorsFromCache) {
-      return customResponseUtil.successResponse(res, HttpCode.OK, moderatorsFromCache)
-    }
-
-    const allModerators = await moderatorsService.getAllModerators({
-      skip,
-      take,
-      sortingOrder
-    })
-
-    await cacheUtil.set(`moderators:page=${skip}:limit=${take}:order=${sortingOrder}`, allModerators)
-
-    return customResponseUtil.successResponse(res, HttpCode.OK, allModerators)
-  } catch (error) {
-    next(error)
-  }
+  return customResponseUtil.successResponse(res, HttpCode.OK, allModerators)
 }
 
-const getSingleModerator: RequestHandler<{ moderatorId: string }> = async (req, res, next) => {
-  try {
-    const moderatorId = +req.params.moderatorId
+const getSingleModerator: RequestHandler<{ moderatorId: string }> = async (req, res) => {
+  const moderatorId = +req.params.moderatorId
 
-    const moderatorFromCache = await cacheUtil.get(`single-moderator:${moderatorId}`)
+  const targetModerator = await moderatorsService.getSingleModerator(moderatorId)
 
-    if (moderatorFromCache) {
-      return customResponseUtil.successResponse(res, HttpCode.OK, moderatorFromCache)
-    }
-
-    const targetModerator = await moderatorsService.getSingleModerator(moderatorId)
-
-    await cacheUtil.set(`single-moderator:${moderatorId}`, targetModerator)
-
-    return customResponseUtil.successResponse(res, HttpCode.OK, targetModerator)
-  } catch (error) {
-    next(error)
-  }
+  return customResponseUtil.successResponse(res, HttpCode.OK, targetModerator)
 }
 
-const createModerator: RequestHandler = async (req, res, next) => {
-  try {
-    const { profileImage } = req.file as any
+const createModerator: RequestHandler = async (req, res) => {
+  const profileImage: Express.Multer.File | undefined = req.file
 
-    let result
+  const moderatorData = Object.assign({}, req.body, {
+    profileImage: profileImage
+  })
 
-    if (profileImage) {
-      result = await cloudinary.uploader.upload(profileImage)
-    }
+  const createdUser = await moderatorsService.createModerator(moderatorData)
 
-    await moderatorsService.createModerator({
-      profileImagePublicId: result?.public_id || null,
-      profileImage: result?.secure_url || constantsConfig.defaultProfileImage,
-      ...req.body
-    })
-
-    return customResponseUtil.successResponse(res, HttpCode.CREATED, 'Moderator created successfully')
-  } catch (error) {
-    next(error)
-  }
+  return res.json(createdUser)
 }
 
-const updateModerator: RequestHandler<{ moderatorId: string }> = async (req, res, next) => {
-  try {
-    const moderatorId = +req.params.moderatorId
+const updateModerator: RequestHandler<{ moderatorId: string }> = async (req, res) => {
+  const moderatorId = +req.params.moderatorId
+  const profileImage: Express.Multer.File | undefined = req.file
 
-    const { profileImagePublicId } = req.body as UpdateModerator
-    const { profileImage } = req.file as any
+  const targetModerator = await moderatorsService.getSingleModerator(moderatorId)
 
-    if (profileImagePublicId) {
-      await cloudinary.uploader.destroy(profileImagePublicId)
-    }
+  const moderatorData = Object.assign({}, req.body, {
+    profileImagePublicId: targetModerator?.profileImage,
+    profileImage: profileImage
+  })
 
-    let result
+  await moderatorsService.updateModerator(moderatorId, moderatorData)
 
-    if (profileImage) {
-      result = await cloudinary.uploader.upload(profileImage)
-    }
-
-    await moderatorsService.updateModerator(moderatorId, {
-      profileImagePublicId: result?.public_id || null,
-      profileImage: result?.secure_url || constantsConfig.defaultProfileImage,
-      ...req.body
-    })
-
-    return customResponseUtil.successResponse(res, HttpCode.CREATED, 'Moderator Updated Successfully')
-  } catch (error) {
-    next(error)
-  }
+  return customResponseUtil.successResponse(res, HttpCode.CREATED, moderatorData)
 }
 
 const deleteModerator: RequestHandler<{ moderatorId: string }> = async (req, res, next) => {

@@ -1,7 +1,7 @@
 import createHttpError from 'http-errors'
 import enumsConfig from '../../config/enums.config'
 import prisma from '../../db/prisma'
-import { CreateModerator, UpdateModerator } from '../dto/moderators.dto'
+import { CreateModerator, UpdateModerator } from '../types/moderators.dto'
 import cacheUtil from '../utils/cache.util'
 import hashPasswordUtil from '../utils/hash-password.util'
 import jwtUtil from '../utils/jwt.util'

@@ -1,4 +1,4 @@
-import Role from '../types/role.types'
+import Role from './role.types'
 
 type SignIn = {
   email: string

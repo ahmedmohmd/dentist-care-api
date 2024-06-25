@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express'
-import { CreateCheckup, UpdateCheckup } from '../dto/checkups.dto'
 import checkupsService from '../services/checkups.service'
 import dailyDatesService from '../services/daily-dates.service'
+import { CreateCheckup, UpdateCheckup } from '../types/checkups.dto'
 import cacheUtil from '../utils/cache.util'
 import checkCheckupsQueryParams from '../utils/check-checkups-query-params.util'
 import customResponseUtil from '../utils/custom-response.util'

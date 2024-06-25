@@ -1,8 +1,11 @@
 import { error } from 'console'
 import type { ErrorRequestHandler } from 'express'
 import createHttpError from 'http-errors'
+import logger from '../startup/handle-logging'
 
-const globalErrorHandler: ErrorRequestHandler = (err, _, res, __) => {
+const globalErrorHandler: ErrorRequestHandler = (err, _, res) => {
+  logger.error(error)
+
   if (createHttpError.isHttpError(err)) {
     return res.status(err.statusCode).json({
       message: err.message,

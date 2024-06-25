@@ -1,4 +1,5 @@
 import { RequestHandler } from 'express'
+import createHttpError from 'http-errors'
 import moderatorsService from '../services/moderators.service'
 import customResponseUtil from '../utils/custom-response.util'
 import HttpCode from '../utils/http-status-code.util'
@@ -7,7 +8,7 @@ import moderatorsValidator from '../validators/moderators.validator'
 const validateModeratorIdParam: RequestHandler = (req, res, next) => {
   const moderatorId = +req.params.moderatorId
 
-  if (!moderatorId) {
+  if (isNaN(moderatorId)) {
     return customResponseUtil.errorResponse(res, HttpCode.BAD_REQUEST, 'Invalid Moderator ID parameter')
   }
 
@@ -15,19 +16,15 @@ const validateModeratorIdParam: RequestHandler = (req, res, next) => {
 }
 
 const validateModeratorExistance: RequestHandler = async (req, res, next) => {
-  try {
-    const moderatorId = +req.params.moderatorId
+  const moderatorId = +req.params.moderatorId
 
-    const targetModerator = await moderatorsService.getSingleModerator(moderatorId)
+  const targetModerator = await moderatorsService.getSingleModerator(moderatorId)
 
-    if (!targetModerator) {
-      return customResponseUtil.errorResponse(res, HttpCode.NOT_FOUND, 'Moderator not found')
-    }
-
-    next()
-  } catch (error) {
-    next(error)
+  if (!targetModerator) {
+    throw new createHttpError.NotFound('moderator not found.')
   }
+
+  next()
 }
 
 const validateUpdateModerator: RequestHandler = (req, res, next) => {
@@ -35,24 +32,26 @@ const validateUpdateModerator: RequestHandler = (req, res, next) => {
 
   if (!validatorResult.success) {
     const errorMessage = validatorResult.error.errors.map((error) => error.message).join('; ')
-    return customResponseUtil.errorResponse(res, HttpCode.BAD_REQUEST, `Moderator is not valid: [${errorMessage}]`)
+
+    throw new createHttpError.BadRequest(`Moderator is not valid: [${errorMessage}]`)
   }
 
   next()
 }
 
 const validateCreateModerator: RequestHandler = async (req, res, next) => {
-  const validatorResult: any = moderatorsValidator.CreateModerator.safeParse(req.body)
+  const validatorResult = moderatorsValidator.CreateModerator.safeParse(req.body)
 
   if (!validatorResult.success) {
-    const errorMessage = validatorResult.error.errors.map((error: any) => error.message).join('; ')
-    return customResponseUtil.errorResponse(res, HttpCode.BAD_REQUEST, `Moderator is not valid: [${errorMessage}]`)
+    const errorMessage = validatorResult.error.errors.map((error) => error.message).join('; ')
+
+    throw new createHttpError.BadRequest(`Moderator is not valid: [${errorMessage}]`)
   }
 
   const targetModerator = await moderatorsService.getModeratorByEmail(req.body.email)
 
   if (targetModerator) {
-    return customResponseUtil.errorResponse(res, HttpCode.BAD_REQUEST, 'Moderator already exists')
+    throw new createHttpError.BadRequest('moderator already exists.')
   }
 
   next()

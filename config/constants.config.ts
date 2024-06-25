@@ -37,5 +37,3 @@ export default {
     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSAzIri_vc-2KP7J9fuB64mP0eF9VQjaO9JEw&usqp=CAU',
   apiEndPoint: `https://localhost:${port}/api/`
 }
-
-// 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSAzIri_vc-2KP7J9fuB64mP0eF9VQjaO9JEw&usqp=CAU'

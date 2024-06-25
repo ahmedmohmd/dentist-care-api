@@ -1,5 +1,5 @@
 import prisma from '../../db/prisma'
-import { CreateCheckup, UpdateCheckup } from '../dto/checkups.dto'
+import { CreateCheckup, UpdateCheckup } from '../types/checkups.dto'
 
 /**
  * Retrieves a list of checkups based on the provided parameters.

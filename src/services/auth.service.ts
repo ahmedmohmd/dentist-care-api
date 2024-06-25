@@ -1,6 +1,6 @@
 import createHttpError from 'http-errors'
 import prisma from '../../db/prisma'
-import { SignUp } from '../dto/auth.dto'
+import { SignUp } from '../types/auth.dto'
 import { SignInData } from '../types/auth.types'
 import hashPasswordUtil from '../utils/hash-password.util'
 import jwtUtil from '../utils/jwt.util'

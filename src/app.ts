@@ -30,6 +30,18 @@ handleRoutes(app)
 // db
 connectDB()
 
+// Handle Uncaught Exceptions
+process.on('uncaughtException', (error: Error) => {
+  logger.error(error)
+  process.exit(1)
+})
+
+// Handle Unhandled Rejections
+process.on('unhandledRejection', (error: Error) => {
+  logger.error(error)
+  process.exit(1)
+})
+
 // bootstrap func
 const PORT = Number(process.env.PORT || constantsConfig.port)
 

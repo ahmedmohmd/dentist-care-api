@@ -3,8 +3,8 @@ import createHttpError from 'http-errors'
 import { CustomRequest } from '../types/custom-request.type'
 import Role from '../types/role.types'
 
-const checkRole: any = (requiredRoles: Role[]) => {
-  return (req: CustomRequest, res: Response, next: NextFunction) => {
+const checkRole = (requiredRoles: Role[]) => {
+  return (req: CustomRequest, _: Response, next: NextFunction) => {
     const userRole: Role = req?.user.role
 
     if (requiredRoles.includes(userRole)) {

@@ -1,7 +1,7 @@
 import createHttpError from 'http-errors'
 import enumsConfig from '../../config/enums.config'
 import prisma from '../../db/prisma'
-import { UpdateAdmin } from '../dto/admins.dto'
+import { UpdateAdmin } from '../types/admins.dto'
 import cacheUtil from '../utils/cache.util'
 import hashPasswordUtil from '../utils/hash-password.util'
 import { deleteImage, updateImage } from './image.service'

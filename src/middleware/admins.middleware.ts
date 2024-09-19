@@ -26,7 +26,7 @@ const validateAdminExistance: RequestHandler = async (req, res, next) => {
 }
 
 const validateUpdateAdmin: RequestHandler = (req, res, next) => {
-  const validatorResult = adminsValidator.UpdateAdmin.safeParse(req.body)
+  const validatorResult: any = adminsValidator.UpdateAdmin.safeParse(req.body)
 
   if (!validatorResult.success) {
     const errorMessage = validatorResult.error.errors.map((error) => error.message).join('; ')

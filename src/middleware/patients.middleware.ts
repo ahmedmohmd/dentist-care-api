@@ -26,7 +26,7 @@ const validatePatientIdParam: RequestHandler = async (req, res, next) => {
 }
 
 const validateUpdatePatient: RequestHandler = async (req, res, next) => {
-  const validatorResult = patientsValidator.updatePatientValidator.safeParse(req.body)
+  const validatorResult: any = patientsValidator.updatePatientValidator.safeParse(req.body)
 
   if (!validatorResult.success) {
     const errorMessage = validatorResult.error.errors.map((error) => error.message).join('; ')

@@ -35,7 +35,7 @@ const authUser: RequestHandler = async (req: Request, res: Response, next: NextF
 }
 
 const validateSignIn: RequestHandler = async (req, res, next) => {
-  const signInDataValidationResult = authValidator.signInValidator.safeParse(req.body)
+  const signInDataValidationResult: any = authValidator.signInValidator.safeParse(req.body)
 
   if (!signInDataValidationResult.success) {
     const errorMessage = signInDataValidationResult.error.errors.map((error) => error.message).join('; ')
@@ -47,7 +47,7 @@ const validateSignIn: RequestHandler = async (req, res, next) => {
 }
 
 const validateSignUp: RequestHandler = async (req, res, next) => {
-  const signUpValidatorResult = authValidator.signUpValidator.safeParse(req.body)
+  const signUpValidatorResult: any = authValidator.signUpValidator.safeParse(req.body)
 
   if (!signUpValidatorResult.success) {
     const errorMessage = signUpValidatorResult.error.errors.map((error) => error.message).join('; ')

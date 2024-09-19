@@ -5,7 +5,7 @@ import customResponseUtil from '../utils/custom-response.util'
 import HttpCode from '../utils/http-status-code.util'
 
 const getAllPatients: RequestHandler = async (req, res) => {
-  const { skip, take, sortingOrder } = checkCheckupsQueryParams(req, res)
+  const { skip, take, sortingOrder } = checkCheckupsQueryParams(req)
 
   const allPatients = await patientsService.getAllPatients({
     skip,

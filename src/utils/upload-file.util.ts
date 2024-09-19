@@ -9,6 +9,4 @@ async function handleUpload(file: Express.Multer.File) {
   })
 }
 
-
-
 export default handleUpload

@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+    ports:
+      - '3000:3000'
+    environment:
+      DATABASE_URL: 'postgresql://postgres:95123574@postgres:5433/dintist_clinic_api?schema=public'
+      JWT_SECRET_KEY: 'Ykagva'
+      REDIS_URL: 'redis://cache:6379'
+      CLOUDINARY_CLOUD_NAME: 'dvouthxyn'
+      CLOUDINARY_API_KEY: '171468429772937'
+      CLOUDINARY_API_SECRET: '44gzhtdE-BOnkLvCrLxUgCc4_XM'
+    command: yarn start
+    depends_on:
+      - postgres
+      - cache
+
+    volumes:
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules
+
+  postgres:
+    image: postgres:13
+    container_name: postgres_container
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 95123574
+      POSTGRES_DB: dintist_clinic_api
+    ports:
+      - '5433:5433'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  cache:
+    image: redis:latest
+    container_name: cache
+    restart: always
+    volumes:
+      - redis_volume_data:/data
+    ports:
+      - 6379:6379
+
+volumes:
+  postgres_data:
+  redis_volume_data:

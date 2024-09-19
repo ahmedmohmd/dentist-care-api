@@ -5,6 +5,6 @@ beforeEach(() => {
   mockReset(bcrypt)
 })
 
-const bcrypt = mockDeep<typeof import('bcrypt')>()
+const bcrypt = mockDeep<typeof import('bcryptjs')>()
 
 export default bcrypt

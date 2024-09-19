@@ -28,7 +28,7 @@ const validateModeratorExistance: RequestHandler = async (req, res, next) => {
 }
 
 const validateUpdateModerator: RequestHandler = (req, res, next) => {
-  const validatorResult = moderatorsValidator.UpdateModerator.safeParse(req.body)
+  const validatorResult: any = moderatorsValidator.UpdateModerator.safeParse(req.body)
 
   if (!validatorResult.success) {
     const errorMessage = validatorResult.error.errors.map((error) => error.message).join('; ')
@@ -40,7 +40,7 @@ const validateUpdateModerator: RequestHandler = (req, res, next) => {
 }
 
 const validateCreateModerator: RequestHandler = async (req, res, next) => {
-  const validatorResult = moderatorsValidator.CreateModerator.safeParse(req.body)
+  const validatorResult: any = moderatorsValidator.CreateModerator.safeParse(req.body)
 
   if (!validatorResult.success) {
     const errorMessage = validatorResult.error.errors.map((error) => error.message).join('; ')

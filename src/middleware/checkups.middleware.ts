@@ -33,7 +33,7 @@ const validateCheckupIdParam: RequestHandler = async (req, res, next) => {
 }
 
 const validateCreateCheckup: RequestHandler = async (req, res, next) => {
-  const validatorResult = checkupsValidator.CreateCheckup.safeParse(req.body)
+  const validatorResult: any = checkupsValidator.CreateCheckup.safeParse(req.body)
 
   if (!validatorResult.success) {
     const errorMessage = validatorResult.error.errors.map((error) => error.message).join('; ')
@@ -50,7 +50,7 @@ const validateCreateCheckup: RequestHandler = async (req, res, next) => {
 }
 
 const validateUpdateCheckup: RequestHandler = async (req, res, next) => {
-  const validatorResult = checkupsValidator.UpdateCheckup.safeParse(req.body)
+  const validatorResult: any = checkupsValidator.UpdateCheckup.safeParse(req.body)
 
   if (!validatorResult.success) {
     const errorMessage = validatorResult.error.errors.map((error) => error.message).join('; ')

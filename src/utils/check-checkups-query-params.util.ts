@@ -1,7 +1,7 @@
-import { Request, Response } from 'express'
+import { Request } from 'express'
+import createHttpError from 'http-errors'
 import constantsConfig from '../../config/constants.config'
-import customResponseUtil from './custom-response.util'
-import HttpCode from './http-status-code.util'
+import { CustomRequest } from '../types/globals.type'
 
 /**
  * Validates and parses the query parameters for checking checkups.
@@ -10,18 +10,24 @@ import HttpCode from './http-status-code.util'
  * @param {Response} res - the response object
  * @return {any} an object containing skip, take, and sortingOrder properties
  */
-const checkCheckupsQueryParams = (req: Request, res: Response): any => {
-  const { page = '1', limit = constantsConfig.limitParam.toString(), sort = 'desc' } = req.query
+const checkCheckupsQueryParams = (
+  req: CustomRequest | Request
+): {
+  skip: number
+  take: number
+  sortingOrder: 'desc' | 'asc'
+} => {
+  const { page = '1', limit = constantsConfig.limitParam.toString(), sort = 'desc' } = (req as Request).query
 
   const parsedPage = parseInt(page.toString(), 10)
   const parsedLimit = parseInt(limit.toString(), 10)
 
   if (isNaN(parsedPage) || isNaN(parsedLimit)) {
-    return customResponseUtil.errorResponse(res, HttpCode.BAD_REQUEST, 'Page and Limit should be numbers')
+    throw new createHttpError.BadRequest('Page and Limit should be numbers')
   }
 
   if (sort !== 'asc' && sort !== 'desc') {
-    return customResponseUtil.errorResponse(res, HttpCode.BAD_REQUEST, "Sort parameter should be 'asc' or 'desc'")
+    throw new createHttpError.BadRequest("Sort parameter should be 'asc' or 'desc'")
   }
 
   const skip = (parsedPage - 1) * constantsConfig.limitParam
